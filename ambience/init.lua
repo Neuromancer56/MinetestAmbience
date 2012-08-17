@@ -1,60 +1,28 @@
--- ***********************************************************************************
---													   ***********************************************
---					Ambience							**************************************************
---													   ***********************************************
--- ***********************************************************************************
+math.randomseed(3)
+sound_playing = 0
 
+minetest.register_globalstep(function(time)
+		local time = minetest.env:get_timeofday()
+	--	minetest.chat_send_all(time .. " " .. sound_playing)
 
-BIRDS = true
-
--- ***********************************************************************************
---		BIRDS 			**************************************************
--- ***********************************************************************************
-if BIRDS == true then
-	local bird = {}
-	bird.sounds = {}
-	bird_sound = function(p)
-				local wanted_sound = {name="bird", gain=0.6}
-				bird.sounds[minetest.hash_node_position(p)] = {
-					handle = minetest.sound_play(wanted_sound, {pos=p, loop=true}),
-					name = wanted_sound.name, }
-			end
-
-	bird_stop = function(p)
-				local sound = bird.sounds[minetest.hash_node_position(p)]
-				if sound ~= nil then
-					minetest.sound_stop(sound.handle)
-					bird.sounds[minetest.hash_node_position(p)] = nil
-				end
-			end
-	minetest.register_on_dignode(function(p, node)
-		if node.name == "4seasons:bird" then
-			bird_stop(p)
-
+		if sound_playing == 0 then
+		sound_playing = time
 		end
-	end)
-	minetest.register_abm({
-			nodenames = { "4seasons:leaves_spring",'default:leaves' },
-			interval = NATURE_GROW_INTERVAL,
-			chance = 200,
-			action = function(pos, node, active_object_count, active_object_count_wider)
-				local air = { x=pos.x, y=pos.y+1,z=pos.z }
-				local is_air = minetest.env:get_node_or_nil(air)
-				if is_air ~= nil and is_air.name == 'air' then
-					minetest.env:add_node(air,{type="node",name='4seasons:bird'})
-					bird_sound(air)
-				end
-			end
-	})
-	minetest.register_abm({
-			nodenames = {'4seasons:bird' },
-			interval = NATURE_GROW_INTERVAL,
-			chance = 2,
-			action = function(pos, node, active_object_count, active_object_count_wider)
-				minetest.env:remove_node(pos)
-				bird_stop(pos)
-			end
-	})
-end
 
+		if sound_playing > 1 and time < 0.2 then
+		sound_playing = 0.2
+		end
+	
+		if time > sound_playing then
 
+			if time > 0.8 or time < 0.2 then
+			sound_playing = time + 0.1
+			minetest.sound_play("Crickets_At_NightCombo")
+			return true
+			end	
+
+				sound_playing = time + 0.1
+				minetest.sound_play("bird")
+				return true
+		end
+end)
