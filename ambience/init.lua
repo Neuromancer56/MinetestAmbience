@@ -167,7 +167,7 @@ minetest.register_globalstep(function(dtime)
 		music.handler = minetest.sound_play(track.name)
 		minetest.after(track.length, function(handler)
 			if handler ~= nil then
-				minetest.sound_stop(handler)
+				minetest.sound_stop(handler, {gain=0.3})
 				music.handler = nil
 			end
 		end, music.handler)
