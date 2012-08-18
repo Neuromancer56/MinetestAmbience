@@ -41,8 +41,10 @@ local play_sound = function(player, list, number)
 			minetest.after(list[number].length, function(args)
 				local list = args[1]
 				local player_name = args[2]
-				minetest.sound_stop(list.handler[player_name])
-				list.handler[player_name] = nil
+				if list.handler[player_name] ~= nil then
+					minetest.sound_stop(list.handler[player_name])
+					list.handler[player_name] = nil
+				end
 			end, {list, player_name})
 		end
 	end
