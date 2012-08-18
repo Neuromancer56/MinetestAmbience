@@ -23,8 +23,7 @@ minetest.register_globalstep(function(dtime)
 		end
 	else
 		for _,player in ipairs(minetest.get_connected_players()) do
-			local light = minetest.env:get_node_light(player:getpos())
-			if light < 5 then
+			if player:getpos().y < 0 then
 				--TODO uncommend this if cave sounds are added
 				--minetest.sound_play(cave[math.random(1, #cave)], {to_player = player:get_player_name()})
 			else
