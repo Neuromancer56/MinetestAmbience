@@ -26,9 +26,16 @@ local cave = {
 
 local cave_frequent = {
 	handler = {},
-	{name="dippingwater_drip", length=2},
+	{name="drippingwater_drip_a", length=2},
+	{name="drippingwater_drip_b", length=2},
+	{name="drippingwater_drip_c", length=2},
 	{name="Single_Water_Droplet", length=3},
 	{name="Spooky_Water_Drops", length=7}
+}
+
+local music = {
+	handler = nil,
+	{name="mtest", length=4*60+33}
 }
 
 -- start playing the sound, set the handler and delete the handler after sound is played
@@ -152,5 +159,17 @@ minetest.register_globalstep(function(dtime)
 				end
 			end
 		end
+	end
+	
+	-- music
+	if math.random(1, 100) <= 1 and music.handler == nil then
+		local track = music[math.random(1, #music)]
+		music.handler = minetest.sound_play(track.name)
+		minetest.after(track.length, function(handler)
+			if handler ~= nil then
+				minetest.sound_stop(handler)
+				music.handler = nil
+			end
+		end, music.handler)
 	end
 end)
