@@ -26,9 +26,7 @@ local cave = {
 
 local cave_frequent = {
 	handler = {},
-	{name="drippingwater_dripa", length=2},
-	{name="drippingwater_dripb", length=2},
-	{name="drippingwater_dripc", length=2},
+	{name="dippingwater_drip", length=2},
 	{name="Single_Water_Droplet", length=3},
 	{name="Spooky_Water_Drops", length=7}
 }
@@ -43,10 +41,8 @@ local play_sound = function(player, list, number)
 			minetest.after(list[number].length, function(args)
 				local list = args[1]
 				local player_name = args[2]
-				if list.handler[player_name] ~= nil then
-					minetest.sound_stop(list.handler[player_name])
-					list.handler[player_name] = nil
-				end
+				minetest.sound_stop(list.handler[player_name])
+				list.handler[player_name] = nil
 			end, {list, player_name})
 		end
 	end
