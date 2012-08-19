@@ -1,6 +1,8 @@
 local night = {
 	handler = {},
 	{name="horned_owl", length=3},
+	{name="horned_owl", length=3},
+	{name="horned_owl", length=3},
 	{name="Wolves_Howling", length=11}
 }
 
@@ -11,12 +13,16 @@ local night_frequent = {
 
 local day = {
 	handler = {},
-	{name="bird", length=30}
+	{name="Best Cardinal Bird", length=4},
+	{name="craw", length=3},
+	{name="bluejay", length=18}
 }
 
 local day_frequent = {
 	handler = {},
-	{name="", length=0}
+	{name="robin2", length=43},
+	{name="birdsongnl", length=72},
+	{name="bird", length=30}
 }
 
 local cave = {
