@@ -65,7 +65,8 @@ local play_music = minetest.setting_getbool("music") or false
 local music = {
 	handler = {},
 	frequency = 1,
-	{name="mtest", length=4*60+33, gain=0.3}
+	{name="mtest", length=4*60+33, gain=0.3},
+	{name="music_1", length=1*60+52, gain=0.3}
 }
 
 local is_daytime = function()
