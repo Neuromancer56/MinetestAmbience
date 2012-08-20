@@ -12,6 +12,9 @@ If you want to install this mod only in one world create the folder
 worldmods/ in your worlddirectory.
 For further information or help see:
 http://wiki.minetest.com/wiki/Installing_Mods
+!!!Important!!!
+Unzip the sounds folder before you use the mod or you wont hear
+anything.
 
 Configuration:
 To add your own sounds copy them into the ambience/sounds/ folder and
