@@ -1,13 +1,13 @@
 local night = {
 	handler = {},
-	frequency = 5,
+	frequency = 10,
 	{name="horned_owl", length=3},
 	{name="Wolves_Howling", length=11}
 }
 
 local night_frequent = {
 	handler = {},
-	frequency = 50,
+	frequency = 25,
 	{name="Crickets_At_NightCombo", length=69}
 }
 
@@ -21,7 +21,7 @@ local day = {
 
 local day_frequent = {
 	handler = {},
-	frequency = 50,
+	frequency = 25,
 	{name="robin2", length=43},
 	{name="birdsongnl", length=72},
 	{name="bird", length=30}
@@ -35,12 +35,29 @@ local cave = {
 
 local cave_frequent = {
 	handler = {},
-	frequency = 50,
+	frequency = 100,
 	{name="drippingwater_drip_a", length=2},
 	{name="drippingwater_drip_b", length=2},
 	{name="drippingwater_drip_c", length=2},
 	{name="Single_Water_Droplet", length=3},
 	{name="Spooky_Water_Drops", length=7}
+}
+
+local water = {
+	handler = {},
+	frequency = 0,--dolphins dont fit into small lakes
+	{name="dolphins", length=6},
+	{name="dolphins_screaming", length=16.5}
+}
+	
+local water_frequent = {
+	handler = {},
+	frequency = 100,
+	{name="scuba1bubbles", length=11},
+	{name="scuba1calm", length=10},
+	{name="scuba1calm2", length=8.5},
+	{name="scuba1interestingbubbles", length=11},
+	{name="scuba1tubulentbubbles", length=10.5}
 }
 
 local play_music = minetest.setting_getbool("music") or false
@@ -51,10 +68,20 @@ local music = {
 }
 
 local is_daytime = function()
-	return (minetest.env:get_timeofday() > 0.2 or  minetest.env:get_timeofday() < 0.8)
+	return (minetest.env:get_timeofday() > 0.2 and  minetest.env:get_timeofday() < 0.8)
 end
 
 local get_ambience = function(player)
+	local pos = player:getpos()
+	pos.y = pos.y+1.5
+	local nodename = minetest.env:get_node(pos).name
+	if string.find(nodename, "default:water") then
+		if music then
+			return {water=water, water_frequent=water_frequent, music=music}
+		else
+			return {water=water, water_frequent=water_frequent}
+		end
+	end
 	if player:getpos().y < 0 then
 		if music then
 			return {cave=cave, cave_frequent=cave_frequent, music=music}
@@ -152,12 +179,26 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
+	if still_playing.water == nil then
+		local list = water
+		if list.handler[player_name] ~= nil then
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
+	if still_playing.water_frequent == nil then
+		local list = water_frequent
+		if list.handler[player_name] ~= nil then
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
 end
 
 local timer = 0
 minetest.register_globalstep(function(dtime)
 	timer = timer+dtime
-	if timer < 5 then
+	if timer < 1 then
 		return
 	end
 	timer = 0
