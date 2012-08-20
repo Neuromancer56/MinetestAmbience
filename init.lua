@@ -53,6 +53,7 @@ local water = {
 local water_frequent = {
 	handler = {},
 	frequency = 100,
+	on_stop = "drowning_gasp",
 	{name="scuba1bubbles", length=11},
 	{name="scuba1calm", length=10},
 	{name="scuba1calm2", length=8.5},
@@ -133,6 +134,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.cave == nil then
 		local list = cave
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -140,6 +144,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.cave_frequent == nil then
 		local list = cave_frequent
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -147,6 +154,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.night == nil then
 		local list = night
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -154,6 +164,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.night_frequent == nil then
 		local list = night_frequent
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -161,6 +174,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.day == nil then
 		local list = day
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -168,6 +184,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.day_frequent == nil then
 		local list = day_frequent
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -175,6 +194,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.music == nil then
 		local list = music
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -182,6 +204,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.water == nil then
 		local list = water
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
@@ -189,6 +214,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.water_frequent == nil then
 		local list = water_frequent
 		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
