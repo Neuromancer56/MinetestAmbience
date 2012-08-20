@@ -22,8 +22,8 @@ local day = {
 local day_frequent = {
 	handler = {},
 	frequency = 25,
-	{name="robin2", length=43},
-	{name="birdsongnl", length=72},
+	{name="robin2", length=16},
+	{name="birdsongnl", length=12.5},
 	{name="bird", length=30}
 }
 
@@ -66,7 +66,10 @@ local music = {
 	handler = {},
 	frequency = 1,
 	{name="mtest", length=4*60+33, gain=0.3},
-	{name="music_1", length=1*60+52, gain=0.3}
+	{name="music_1", length=1*60+52, gain=0.3},
+	{name="ambiance", length=19, gain=0.3},
+	{name="dark_ambiance", length=46, gain=0.3},
+	{name="eastern_feeling", lenght=3*60+51}
 }
 
 local is_daytime = function()
