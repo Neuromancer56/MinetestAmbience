@@ -44,9 +44,9 @@ local cave_frequent = {
 local is_daytime = function()
 	local daytime
 	if  minetest.env:get_timeofday() < 0.2 or  minetest.env:get_timeofday() > 0.8 then 
-		daytime = true
-	else
 		daytime = false
+	else
+		daytime = true
 	end
 	return daytime
 end
@@ -54,30 +54,16 @@ end
 local setting = function (player_parm)
 	local settinglist
 	if player_parm:getpos().y < 0 then
-		settinglist = cave
+		settinglist = {cave, cave_frequent}
 	else
 		if is_daytime then
-			settinglist = day
+			settinglist = {day, day_frequent}
 		else
-			settinglist = night
+			settinglist = {night, night_frequent}
 		end	
 	end
 	return settinglist
 end
-
-local setting_frequent = function (setting_parm)
-	local setting_frequent_list
-	if setting_parm == cave then
-		setting_frequent_list = cave_frequent
-	elseif setting_parm == day then
-		setting_frequent_list = day_frequent
-	else
-		setting_frequent_list = night_frequent
-	end
-	return setting_frequent_list
-end
-	
-	
 
 -- start playing the sound, set the handler and delete the handler after sound is played
 local play_sound = function(player, list, number)
@@ -152,22 +138,20 @@ minetest.register_globalstep(function(dtime)
 		return
 	end
 	timer = 0
-	
-	-- normal sounds
-	if math.random(1, 100) <= 5 then  --this 5 is what I am trying to change based on setting
-		for _,player in ipairs(minetest.get_connected_players()) do
-			player_setting = setting(player)
-			stop_sound({cave=true, cave_frequent=true}, player)--big problem here
-			play_sound(player, player_setting, math.random(1, #player_setting))
-		end
-	end
 
-	-- frequent sounds
-	if math.random(1, 100) <= 50 then
-		for _,player in ipairs(minetest.get_connected_players()) do
-			player_setting_frequent = setting_frequent(player)
-			stop_sound({cave=true, cave_frequent=true}, player)--big problem here
-			play_sound(player, player_setting_frequent, math.random(1, #player_setting_frequent))
+	for _,player in ipairs(minetest.get_connected_players()) do
+		player_setting = setting(player)
+		
+		-- normal sounds
+		if math.random(1, 100) <= 5 then  --this 5 is what I am trying to change based on setting
+				stop_sound({player_setting}, player)--big problem here
+				play_sound(player, player_setting[1], math.random(1, #player_setting[0]))
+		end
+	
+		-- frequent sounds
+		if math.random(1, 100) <= 50 then
+				stop_sound({player_setting}, player)--big problem here
+				play_sound(player, player_setting[2], math.random(1, #player_setting[1]))
 		end
 	end
-end)
+)
