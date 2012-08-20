@@ -1,18 +1,19 @@
 local night = {
 	handler = {},
-	{name="horned_owl", length=3},
-	{name="horned_owl", length=3},
+	frequency = 5,
 	{name="horned_owl", length=3},
 	{name="Wolves_Howling", length=11}
 }
 
 local night_frequent = {
 	handler = {},
+	frequency = 50,
 	{name="Crickets_At_NightCombo", length=69}
 }
 
 local day = {
 	handler = {},
+	frequency = 5,
 	{name="Best Cardinal Bird", length=4},
 	{name="craw", length=3},
 	{name="bluejay", length=18}
@@ -20,6 +21,7 @@ local day = {
 
 local day_frequent = {
 	handler = {},
+	frequency = 50,
 	{name="robin2", length=43},
 	{name="birdsongnl", length=72},
 	{name="bird", length=30}
@@ -27,11 +29,13 @@ local day_frequent = {
 
 local cave = {
 	handler = {},
+	frequency = 5,
 	{name="Bats_in_Cave", length=5}
 }
 
 local cave_frequent = {
 	handler = {},
+	frequency = 50,
 	{name="drippingwater_drip_a", length=2},
 	{name="drippingwater_drip_b", length=2},
 	{name="drippingwater_drip_c", length=2},
@@ -39,16 +43,49 @@ local cave_frequent = {
 	{name="Spooky_Water_Drops", length=7}
 }
 
+local play_music = minetest.setting_getbool("music") or false
 local music = {
-	handler = nil,
-	{name="mtest", length=4*60+33}
+	handler = {},
+	frequency = 1,
+	{name="mtest", length=4*60+33, gain=0.3}
 }
+
+local is_daytime = function()
+	return (minetest.env:get_timeofday() > 0.2 or  minetest.env:get_timeofday() < 0.8)
+end
+
+local get_ambience = function(player)
+	if player:getpos().y < 0 then
+		if music then
+			return {cave=cave, cave_frequent=cave_frequent, music=music}
+		else
+			return {cave=cave, cave_frequent=cave_frequent}
+		end
+	end
+	if is_daytime() then
+		if music then
+			return {day=day, day_frequent=day_frequent, music=music}
+		else
+			return {day=day, day_frequent=day_frequent}
+		end
+	else
+		if music then
+			return {night=night, night_frequent=night_frequent, music=music}
+		else
+			return {night=night, night_frequent=night_frequent}
+		end
+	end
+end
 
 -- start playing the sound, set the handler and delete the handler after sound is played
 local play_sound = function(player, list, number)
 	local player_name = player:get_player_name()
 	if list.handler[player_name] == nil then
-		local handler = minetest.sound_play(list[number].name, {to_player=player_name})
+		local gain = 1.0
+		if list[number].gain ~= nil then
+			gain = list[number].gain
+		end
+		local handler = minetest.sound_play(list[number].name, {to_player=player_name, gain=gain})
 		if handler ~= nil then
 			list.handler[player_name] = handler
 			minetest.after(list[number].length, function(args)
@@ -108,6 +145,13 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
+	if still_playing.music == nil then
+		local list = music
+		if list.handler[player_name] ~= nil then
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
 end
 
 local timer = 0
@@ -117,65 +161,14 @@ minetest.register_globalstep(function(dtime)
 		return
 	end
 	timer = 0
-	-- normal sounds
-	if math.random(1, 100) <= 5 then
-		if  minetest.env:get_timeofday() < 0.2 or  minetest.env:get_timeofday() > 0.8 then
-			for _,player in ipairs(minetest.get_connected_players()) do
-				if player:getpos().y < 0 then
-					stop_sound({cave=true, cave_frequent=true}, player)
-					play_sound(player, cave, math.random(1, #cave))
-				else
-					stop_sound({night=true, night_frequent=true}, player)
-					play_sound(player, night, math.random(1, #night))
-				end
-			end
-		else
-			for _,player in ipairs(minetest.get_connected_players()) do
-				if player:getpos().y < 0 then
-					stop_sound({cave=true, cave_frequent=true}, player)
-					play_sound(player, cave, math.random(1, #cave))
-				else
-					stop_sound({day=true, day_frequent=true}, player)
-					play_sound(player, day, math.random(1, #day))
-				end
+	
+	for _,player in ipairs(minetest.get_connected_players()) do
+		local ambiences = get_ambience(player)
+		stop_sound(ambiences, player)
+		for _,ambience in pairs(ambiences) do
+			if math.random(1, 100) <= ambience.frequency then
+				play_sound(player, ambience, math.random(1, #ambience))
 			end
 		end
-	end
-	
-	-- frequent sounds
-	if math.random(1, 100) <= 50 then
-		if  minetest.env:get_timeofday() < 0.2 or  minetest.env:get_timeofday() > 0.8 then
-			for _,player in ipairs(minetest.get_connected_players()) do
-				if player:getpos().y < 0 then
-					stop_sound({cave=true, cave_frequent=true}, player)
-					play_sound(player, cave_frequent, math.random(1, #cave_frequent))
-				else
-					stop_sound({night=true, night_frequent=true}, player)
-					play_sound(player, night_frequent, math.random(1, #night_frequent))
-				end
-			end
-		else
-			for _,player in ipairs(minetest.get_connected_players()) do
-				if player:getpos().y < 0 then
-					stop_sound({cave=true, cave_frequent=true}, player)
-					play_sound(player, cave_frequent, math.random(1, #cave_frequent))
-				else
-					stop_sound({day=true, day_frequent=true}, player)
-					play_sound(player, day_frequent, math.random(1, #day_frequent))
-				end
-			end
-		end
-	end
-	
-	-- music
-	if math.random(1, 100) <= 1 and music.handler == nil then
-		local track = music[math.random(1, #music)]
-		music.handler = minetest.sound_play(track.name)
-		minetest.after(track.length, function(handler)
-			if handler ~= nil then
-				minetest.sound_stop(handler, {gain=0.3})
-				music.handler = nil
-			end
-		end, music.handler)
 	end
 end)
