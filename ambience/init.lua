@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .08
+--Ambiance Configuration for version .09
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -11,8 +11,8 @@ local night_frequent_frequency = 150  --crickets
 local night_frequent_volume = 0.9
 local day_frequency = 100  --crow, bluejay, cardinal
 local day_volume = 0.9 
-local day_frequent_frequency = 1000  --singing birds 
-local day_frequent_volume = 0.18    --(suggestion: keep 'em quiet, around .18)
+local day_frequent_frequency = 1000  --crow, bluejay, cardinal
+local day_frequent_volume = 0.18
 local cave_frequency = 10  --bats
 local cave_volume = 1.0  
 local cave_frequent_frequency = 70  --drops of water dripping
@@ -28,7 +28,8 @@ local night = {
 	handler = {},
 	frequency = night_frequency,
 	{name="horned_owl", length=3, gain=night_volume},
-	{name="Wolves_Howling", length=11,  gain=night_volume}
+	{name="Wolves_Howling", length=11,  gain=night_volume},
+	{name="ComboWind", length=17,  gain=night_volume}
 }
 
 local night_frequent = {
@@ -42,7 +43,8 @@ local day = {
 	frequency = day_frequency,
 	{name="Best Cardinal Bird", length=4, gain=day_volume},
 	{name="craw", length=3, gain=day_volume},
-	{name="bluejay", length=18, gain=day_volume}
+	{name="bluejay", length=18, gain=day_volume},
+	{name="ComboWind", length=17,  gain=day_volume}
 }
 
 local day_frequent = {
@@ -50,10 +52,11 @@ local day_frequent = {
 	frequency = day_frequent_frequency,
 	{name="robin2", length=16, gain=day_frequent_volume},
 	{name="birdsongnl", length=13, gain=day_frequent_volume},
-	{name="bird", length=30, gain=day_frequent_volume}--,
---	{name="Best Cardinal Bird", length=4, gain=day_frequent_volume},
---	{name="craw", length=3, gain=day_frequent_volume},
---	{name="bluejay", length=18, gain=day_frequent_volume}
+	{name="bird", length=30, gain=day_frequent_volume},
+	{name="Best Cardinal Bird", length=4, gain=day_frequent_volume},
+	{name="craw", length=3, gain=day_frequent_volume},
+	{name="bluejay", length=18, gain=day_frequent_volume},
+	{name="ComboWind", length=17,  gain=day_frequent_volume}
 }
 
 
