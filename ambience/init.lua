@@ -1,46 +1,76 @@
+--------------------------------------------------------------------------------------------------------
+--Ambiance Configuration for version .08
+
+local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
+
+--for frequencies below use a number between 0 and max_frequency_all
+--for volumes below, use a number between 0.0 and 1, the larger the number the louder the sounds
+local night_frequency = 20  --owls, wolves 
+local night_volume = 0.9  
+local night_frequent_frequency = 150  --crickets
+local night_frequent_volume = 0.9
+local day_frequency = 100  --crow, bluejay, cardinal
+local day_volume = 0.9 
+local day_frequent_frequency = 1000  --singing birds 
+local day_frequent_volume = 0.18    --(suggestion: keep 'em quiet, around .18)
+local cave_frequency = 10  --bats
+local cave_volume = 1.0  
+local cave_frequent_frequency = 70  --drops of water dripping
+local cave_frequent_volume = 1.0 
+local water_frequent_frequency = 1000  --underwater sounds
+local water_frequent_volume = 1.0 
+local music_frequency = 1  --music (suggestion: keep this one low like around 1)
+local music_volume = 0.3 
+--End of Config
+----------------------------------------------------------------------------------------------------
+
 local night = {
 	handler = {},
-	frequency = 10,
-	{name="horned_owl", length=3},
-	{name="Wolves_Howling", length=11}
+	frequency = night_frequency,
+	{name="horned_owl", length=3, gain=night_volume},
+	{name="Wolves_Howling", length=11,  gain=night_volume}
 }
 
 local night_frequent = {
 	handler = {},
-	frequency = 25,
-	{name="Crickets_At_NightCombo", length=69}
+	frequency = night_frequent_frequency,
+	{name="Crickets_At_NightCombo", length=69, gain=night_frequent_volume}
 }
 
 local day = {
 	handler = {},
-	frequency = 5,
-	{name="Best Cardinal Bird", length=4},
-	{name="craw", length=3},
-	{name="bluejay", length=18}
+	frequency = day_frequency,
+	{name="Best Cardinal Bird", length=4, gain=day_volume},
+	{name="craw", length=3, gain=day_volume},
+	{name="bluejay", length=18, gain=day_volume}
 }
 
 local day_frequent = {
 	handler = {},
-	frequency = 25,
-	{name="robin2", length=43},
-	{name="birdsongnl", length=72},
-	{name="bird", length=30}
+	frequency = day_frequent_frequency,
+	{name="robin2", length=16, gain=day_frequent_volume},
+	{name="birdsongnl", length=13, gain=day_frequent_volume},
+	{name="bird", length=30, gain=day_frequent_volume}--,
+--	{name="Best Cardinal Bird", length=4, gain=day_frequent_volume},
+--	{name="craw", length=3, gain=day_frequent_volume},
+--	{name="bluejay", length=18, gain=day_frequent_volume}
 }
+
 
 local cave = {
 	handler = {},
-	frequency = 5,
-	{name="Bats_in_Cave", length=5}
+	frequency = cave_frequency,
+	{name="Bats_in_Cave", length=5, gain=cave_volume}
 }
 
 local cave_frequent = {
 	handler = {},
-	frequency = 100,
-	{name="drippingwater_drip_a", length=2},
-	{name="drippingwater_drip_b", length=2},
-	{name="drippingwater_drip_c", length=2},
-	{name="Single_Water_Droplet", length=3},
-	{name="Spooky_Water_Drops", length=7}
+	frequency = cave_frequent_frequency,
+	{name="drippingwater_drip_a", length=2, gain=cave_frequent_volume},
+	{name="drippingwater_drip_b", length=2, gain=cave_frequent_volume},
+	{name="drippingwater_drip_c", length=2, gain=cave_frequent_volume},
+	{name="Single_Water_Droplet", length=3, gain=cave_frequent_volume},
+	{name="Spooky_Water_Drops", length=7, gain=cave_frequent_volume}
 }
 
 local water = {
@@ -52,20 +82,20 @@ local water = {
 
 local water_frequent = {
 	handler = {},
-	frequency = 100,
+	frequency = water_frequent_frequency,
 	on_stop = "drowning_gasp",
-	{name="scuba1bubbles", length=11},
-	{name="scuba1calm", length=10},
-	{name="scuba1calm2", length=8.5},
-	{name="scuba1interestingbubbles", length=11},
-	{name="scuba1tubulentbubbles", length=10.5}
+	{name="scuba1bubbles", length=11, gain=water_frequent_volume},
+	{name="scuba1calm", length=10},  --not sure why but sometimes I get errors when setting gain=water_frequent_volume here.
+	{name="scuba1calm2", length=8.5, gain=water_frequent_volume},
+	{name="scuba1interestingbubbles", length=11, gain=water_frequent_volume},
+	{name="scuba1tubulentbubbles", length=10.5, gain=water_frequent_volume}
 }
 
 local play_music = minetest.setting_getbool("music") or false
 local music = {
 	handler = {},
-	frequency = 1,
-	{name="mtest", length=4*60+33, gain=0.3}
+	frequency = music_frequency,
+	{name="mtest", length=4*60+33, gain=music_volume}
 }
 
 local is_daytime = function()
@@ -235,7 +265,7 @@ minetest.register_globalstep(function(dtime)
 		local ambiences = get_ambience(player)
 		stop_sound(ambiences, player)
 		for _,ambience in pairs(ambiences) do
-			if math.random(1, 100) <= ambience.frequency then
+			if math.random(1, 1000) <= ambience.frequency then
 				play_sound(player, ambience, math.random(1, #ambience))
 			end
 		end
