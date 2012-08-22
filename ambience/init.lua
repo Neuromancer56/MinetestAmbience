@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .09
+--Ambiance Configuration for version .10
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -19,7 +19,7 @@ local cave_frequent_frequency = 70  --drops of water dripping
 local cave_frequent_volume = 1.0 
 local water_frequent_frequency = 1000  --underwater sounds
 local water_frequent_volume = 1.0 
-local music_frequency = 1  --music (suggestion: keep this one low like around 1)
+local music_frequency = 2  --music (suggestion: keep this one low like around 1)
 local music_volume = 0.3 
 --End of Config
 ----------------------------------------------------------------------------------------------------
@@ -98,7 +98,11 @@ local play_music = minetest.setting_getbool("music") or false
 local music = {
 	handler = {},
 	frequency = music_frequency,
-	{name="mtest", length=4*60+33, gain=music_volume}
+	{name="mtest", length=4*60+33, gain=music_volume},
+	{name="echos", length=2*60+26, gain=music_volume},
+	{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
+	{name="eastern_feeling", length=3*60+51, gain=music_volume},
+	{name="dark_ambiance", length=44, gain=music_volume}
 }
 
 local is_daytime = function()

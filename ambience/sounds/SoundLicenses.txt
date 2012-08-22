@@ -1,3 +1,17 @@
+--------------Music Lic:
+- Jordach:
+--mtest
+--dark_ambiance
+--eastern_feeling
+These sounds are used for the Mod for Minetest; Ambiance.
+The included sounds are http://creativecommons.org/licenses/by-nc-sa/3.0/ 
+
+ 313hummer (Jordan Craige)  
+--FoamOfTheSea http://soundcloud.com/jordan-craige/foam-of-the-sea
+--echos  http://soundcloud.com/jordan-craige/echos-1
+Creative Commons Attribution license (reuse allowed)  Attribution 3.0 Unported (CC BY 3.0)
+
+-----------Sound Lic:
 --Nightime Sound, Recorded by Mike Koenig, License: Attribution 3.0 http://soundbible.com/951-Nightime.html
 --Crickets At Night Sound, License: Attribution 3.0 | Recorded by Mike Koenig |http://soundbible.com/365-Crickets-At-Night.html
 
@@ -37,7 +51,7 @@ ComboWind uses:
 --wind-in-the-trees -Attribution License, laurent, http://www.freesound.org/people/laurent/sounds/16995/
 --drygrassInWind- Creative Commons 0 License, felix.blume, http://www.freesound.org/people/felix.blume/sounds/146436/
 
-[url=http://ompldr.org/vZjZzMg]Immersive Sounds 0.9[/url] Adds wind, and distant bluejays, crows, and cardinals.
+[url=http://ompldr.org/vZjZzMg]Immersive Sounds 0.9[/url] Adds wind, and distant bluejays, crows, and cardinals, adds 4 more songs.
 
 ----------------Not used yet:
 --natural night sounds in Boquete.wav,  Attribution License, laurent, http://www.freesound.org/people/laurent/sounds/15851/
