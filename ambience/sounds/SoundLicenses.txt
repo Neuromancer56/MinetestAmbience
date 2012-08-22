@@ -51,7 +51,7 @@ ComboWind uses:
 --wind-in-the-trees -Attribution License, laurent, http://www.freesound.org/people/laurent/sounds/16995/
 --drygrassInWind- Creative Commons 0 License, felix.blume, http://www.freesound.org/people/felix.blume/sounds/146436/
 
-[url=http://ompldr.org/vZjZzMg]Immersive Sounds 0.9[/url] Adds wind, and distant bluejays, crows, and cardinals, adds 4 more songs.
+--Splash: Attribution 3.0 | Recorded by BlastwaveFx.com, http://soundbible.com/546-Fish-Splashing.html
 
 ----------------Not used yet:
 --natural night sounds in Boquete.wav,  Attribution License, laurent, http://www.freesound.org/people/laurent/sounds/15851/

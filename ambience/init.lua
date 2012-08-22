@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .10
+--Ambiance Configuration for version .11
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -17,13 +17,13 @@ local cave_frequency = 10  --bats
 local cave_volume = 1.0  
 local cave_frequent_frequency = 70  --drops of water dripping
 local cave_frequent_volume = 1.0 
-local water_frequent_frequency = 1000  --underwater sounds
+local water_frequent_frequency = 1000  --water sounds
 local water_frequent_volume = 1.0 
-local music_frequency = 2  --music (suggestion: keep this one low like around 1)
+local music_frequency = 7  --music (suggestion: keep this one low like around 6)
 local music_volume = 0.3 
 --End of Config
 ----------------------------------------------------------------------------------------------------
-
+local played_on_start = false
 local night = {
 	handler = {},
 	frequency = night_frequency,
@@ -56,7 +56,7 @@ local day_frequent = {
 	{name="Best Cardinal Bird", length=4, gain=day_frequent_volume},
 	{name="craw", length=3, gain=day_frequent_volume},
 	{name="bluejay", length=18, gain=day_frequent_volume},
-	{name="ComboWind", length=17,  gain=day_frequent_volume}
+	{name="ComboWind", length=17,  gain=day_frequent_volume*3}
 }
 
 
@@ -87,6 +87,7 @@ local water_frequent = {
 	handler = {},
 	frequency = water_frequent_frequency,
 	on_stop = "drowning_gasp",
+	on_start = "Splash",
 	{name="scuba1bubbles", length=11, gain=water_frequent_volume},
 	{name="scuba1calm", length=10},  --not sure why but sometimes I get errors when setting gain=water_frequent_volume here.
 	{name="scuba1calm2", length=8.5, gain=water_frequent_volume},
@@ -251,8 +252,9 @@ local stop_sound = function(still_playing, player)
 	if still_playing.water_frequent == nil then
 		local list = water_frequent
 		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
+			if list.on_stop ~= nil then				
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+				played_on_start = false
 			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
@@ -273,6 +275,10 @@ minetest.register_globalstep(function(dtime)
 		stop_sound(ambiences, player)
 		for _,ambience in pairs(ambiences) do
 			if math.random(1, 1000) <= ambience.frequency then
+				if ambience.on_start ~= nil and played_on_start == false then
+					played_on_start = true
+					minetest.sound_play(ambience.on_start, {to_player=player:get_player_name()})					
+				end
 				play_sound(player, ambience, math.random(1, #ambience))
 			end
 		end
