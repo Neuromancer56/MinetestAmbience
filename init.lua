@@ -2,13 +2,14 @@ local night = {
 	handler = {},
 	frequency = 10,
 	{name="horned_owl", length=3},
-	{name="Wolves_Howling", length=11}
+	{name="Wolves_Howling", length=11},
+	{name="ComboWind", length=17},
 }
 
 local night_frequent = {
 	handler = {},
 	frequency = 25,
-	{name="Crickets_At_NightCombo", length=69}
+	{name="Crickets_At_NightCombo", length=69},
 }
 
 local day = {
@@ -16,7 +17,8 @@ local day = {
 	frequency = 5,
 	{name="Best Cardinal Bird", length=4},
 	{name="craw", length=3},
-	{name="bluejay", length=18}
+	{name="bluejay", length=18},
+	{name="ComboWind", length=17},
 }
 
 local day_frequent = {
@@ -24,13 +26,13 @@ local day_frequent = {
 	frequency = 25,
 	{name="robin2", length=16},
 	{name="birdsongnl", length=12.5},
-	{name="bird", length=30}
+	{name="bird", length=30},
 }
 
 local cave = {
 	handler = {},
 	frequency = 5,
-	{name="Bats_in_Cave", length=5}
+	{name="Bats_in_Cave", length=5},
 }
 
 local cave_frequent = {
@@ -40,14 +42,14 @@ local cave_frequent = {
 	{name="drippingwater_drip_b", length=2},
 	{name="drippingwater_drip_c", length=2},
 	{name="Single_Water_Droplet", length=3},
-	{name="Spooky_Water_Drops", length=7}
+	{name="Spooky_Water_Drops", length=7},
 }
 
 local water = {
 	handler = {},
 	frequency = 0,--dolphins dont fit into small lakes
 	{name="dolphins", length=6},
-	{name="dolphins_screaming", length=16.5}
+	{name="dolphins_screaming", length=16.5},
 }
 	
 local water_frequent = {
@@ -58,7 +60,7 @@ local water_frequent = {
 	{name="scuba1calm", length=10},
 	{name="scuba1calm2", length=8.5},
 	{name="scuba1interestingbubbles", length=11},
-	{name="scuba1tubulentbubbles", length=10.5}
+	{name="scuba1tubulentbubbles", length=10.5},
 }
 
 local play_music = minetest.setting_getbool("music") or false
@@ -69,7 +71,9 @@ local music = {
 	{name="music_1", length=1*60+52, gain=0.3},
 	{name="ambiance", length=19, gain=0.3},
 	{name="dark_ambiance", length=46, gain=0.3},
-	{name="eastern_feeling", length=3*60+51, gain=0.3}
+	{name="eastern_feeling", length=3*60+51, gain=0.3},
+	{name="echos", length=2*60+26, gain=0.3},
+	{name="FoamOfTheSea", length=1*60+50, gain=0.3},
 }
 
 local is_daytime = function()
