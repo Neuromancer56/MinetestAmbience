@@ -1,5 +1,7 @@
 To Do:
 
+-add random_volume parameter to night normal, day normal, & cave normal sounds to create feeling of distance.
+
 m-get constant birds more quiet during the day
 m-bats seem way too frequent now?
 m-when playing multiplayer seems to increase frequency of music & normal sounds to the point where they are obnoxious

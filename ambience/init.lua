@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .11
+--Ambiance Configuration for version .12
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -112,7 +112,7 @@ end
 
 local get_ambience = function(player)
 	local pos = player:getpos()
-	pos.y = pos.y+1.5
+	pos.y = pos.y+1.0
 	local nodename = minetest.env:get_node(pos).name
 	if string.find(nodename, "default:water") then
 		if music then
