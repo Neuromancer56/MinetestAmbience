@@ -63,6 +63,12 @@ local water_frequent = {
 	{name="scuba1tubulentbubbles", length=10.5},
 }
 
+local splash = {
+	handler = {},
+	frequency = 100,
+	{name="Splash", length=1.5},
+}
+
 local play_music = minetest.setting_getbool("music") or false
 local music = {
 	handler = {},
@@ -81,36 +87,56 @@ local is_daytime = function()
 end
 
 local get_ambience = function(player)
+	local table = {}
+	
+	local play_water = false
+	local play_splash = false
+	local play_day = false
+	local play_cave = false
+	local play_night = false
+	
 	local pos = player:getpos()
 	pos.y = pos.y+1.5
 	local nodename = minetest.env:get_node(pos).name
 	if string.find(nodename, "default:water") then
-		if music then
-			return {water=water, water_frequent=water_frequent, music=music}
-		else
-			return {water=water, water_frequent=water_frequent}
+		play_water = true
+	elseif nodename == "air" then
+		pos.y = pos.y-1.5
+		local nodename = minetest.env:get_node(pos).name
+		if string.find(nodename, "default:water") then
+			play_splash = true
 		end
 	end
 	if player:getpos().y < 0 then
-		if music then
-			return {cave=cave, cave_frequent=cave_frequent, music=music}
-		else
-			return {cave=cave, cave_frequent=cave_frequent}
-		end
-	end
-	if is_daytime() then
-		if music then
-			return {day=day, day_frequent=day_frequent, music=music}
-		else
-			return {day=day, day_frequent=day_frequent}
-		end
+		play_cave = true
+	elseif is_daytime() then
+		play_day = true
 	else
-		if music then
-			return {night=night, night_frequent=night_frequent, music=music}
-		else
-			return {night=night, night_frequent=night_frequent}
-		end
+		play_night = true
 	end
+	
+	if play_music then
+		table.music = music
+	end
+	if play_water then
+		table.water = water
+		table.water_frequent = water_frequent
+		return table
+	end
+	if play_splash then
+		table.splash = splash
+	end
+	if play_day then
+		table.day = day
+		table.day_frequent = day_frequent
+	elseif play_night then
+		table.night = night
+		table.night_frequent = night_frequent
+	elseif play_cave then
+		table.cave = cave
+		table.cave_frequent = cave_frequent
+	end
+	return table
 end
 
 -- start playing the sound, set the handler and delete the handler after sound is played
@@ -221,6 +247,16 @@ local stop_sound = function(still_playing, player)
 	end
 	if still_playing.water_frequent == nil then
 		local list = water_frequent
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
+	if still_playing.splash == nil then
+		local list = splash
 		if list.handler[player_name] ~= nil then
 			if list.on_stop ~= nil then
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
