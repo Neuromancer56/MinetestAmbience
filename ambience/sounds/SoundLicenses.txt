@@ -1,5 +1,5 @@
 --------------Music Lic:
-- Jordach:
+Jordach:
 --mtest
 --dark_ambiance
 --eastern_feeling
@@ -11,8 +11,11 @@ The included sounds are http://creativecommons.org/licenses/by-nc-sa/3.0/
 --echos  http://soundcloud.com/jordan-craige/echos-1
 Creative Commons Attribution license (reuse allowed)  Attribution 3.0 Unported (CC BY 3.0)
 
+xi-intersection:
 http://soundcloud.com/xi-intersection/mass-effect-uncharted-worlds  Creative Commons License
+--not used:
 http://soundcloud.com/xi-intersection/donkey-kong-country-2-flight
+http://soundcloud.com/kogyo/kogyo-skalar-m1
 
 -----------Sound Lic:
 --Nightime Sound, Recorded by Mike Koenig, License: Attribution 3.0 http://soundbible.com/951-Nightime.html
@@ -55,6 +58,12 @@ ComboWind uses:
 --drygrassInWind- Creative Commons 0 License, felix.blume, http://www.freesound.org/people/felix.blume/sounds/146436/
 
 --Splash: Attribution 3.0 | Recorded by BlastwaveFx.com, http://soundbible.com/546-Fish-Splashing.html
+
+--small_waterfall Attribution License, volivieri, http://www.freesound.org/people/volivieri/sounds/38390/
+
+--Lake_Waves_2*, Attribution License, Benboncan, http://www.freesound.org/people/Benboncan/sounds/67884/
+
+--water_swimming_splashing*, Attribution Noncommercial License, Robinhood76, http://www.freesound.org/people/Robinhood76/sounds/79657/
 
 ----------------Not used yet:
 --natural night sounds in Boquete.wav,  Attribution License, laurent, http://www.freesound.org/people/laurent/sounds/15851/

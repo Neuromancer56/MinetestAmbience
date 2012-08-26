@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .12
+--Ambiance Configuration for version .13
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -95,6 +95,12 @@ local water_frequent = {
 	{name="scuba1tubulentbubbles", length=10.5, gain=water_frequent_volume}
 }
 
+local flowing_water = {
+	handler = {},
+	frequency = 1000,
+	{name="small_waterfall", length=14},
+}
+
 local play_music = minetest.setting_getbool("music") or false
 local music = {
 	handler = {},
@@ -103,11 +109,29 @@ local music = {
 	{name="echos", length=2*60+26, gain=music_volume},
 	{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
 	{name="eastern_feeling", length=3*60+51, gain=music_volume},
+	{name="Mass_Effect_Uncharted_Worlds", length=2*60+29, gain=music_volume},
 	{name="dark_ambiance", length=44, gain=music_volume}
 }
 
 local is_daytime = function()
 	return (minetest.env:get_timeofday() > 0.2 and  minetest.env:get_timeofday() < 0.8)
+end
+
+local nodes_in_range = function(pos, search_distance, node_name)
+	local search_p = {x=0, y=0, z=0}
+	local nodes_found = 0
+	for p_x=(pos.x-search_distance), (pos.x+search_distance) do
+		for p_y=(pos.y-search_distance), (pos.y+search_distance) do
+			for p_z=(pos.z-search_distance), (pos.z+search_distance) do
+				local search_n = minetest.env:get_node({x=p_x, y=p_y, z=p_z})
+				if search_n.name == node_name then
+					nodes_found = nodes_found + 1
+				end
+			end
+		end
+	end
+	return nodes_found
+	--minetest.chat_send_all("Range: " .. tostring(search_distance) .. " | Found (" .. node_name .. ": " .. nodes_found .. ")")
 end
 
 local get_ambience = function(player)
@@ -119,6 +143,13 @@ local get_ambience = function(player)
 			return {water=water, water_frequent=water_frequent, music=music}
 		else
 			return {water=water, water_frequent=water_frequent}
+		end
+	end
+	if nodes_in_range(pos, 5, "default:water_flowing")>5 then
+		if music then
+			return {flowing_water=flowing_water, music=music}
+		else
+			return {flowing_water=flowing_water}
 		end
 	end
 	if player:getpos().y < 0 then
@@ -231,6 +262,16 @@ local stop_sound = function(still_playing, player)
 	end
 	if still_playing.music == nil then
 		local list = music
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
+	if still_playing.flowing_water == nil then
+		local list = flowing_water
 		if list.handler[player_name] ~= nil then
 			if list.on_stop ~= nil then
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
