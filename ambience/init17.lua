@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .19
+--Ambiance Configuration for version .17
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -23,7 +23,7 @@ local beach_frequent_frequency = 1000  --waves
 local beach_frequent_volume = 1.0 
 local water_frequent_frequency = 1000  --water sounds
 local water_frequent_volume = 1.0 
-local music_frequency = 7  --music (suggestion: keep this one low like around 6)
+local music_frequency = 0  --music (suggestion: keep this one low like around 6)
 local music_volume = 0.3 
 --End of Config
 ----------------------------------------------------------------------------------------------------
@@ -114,8 +114,7 @@ local water_frequent = {
 
 local water_surface = {
 	handler = {},
-	frequency = 1000,
-	on_stop = "Splash",
+	frequency = 10,
 	on_start = "Splash",
 	{name="lake_waves_2_calm", length=9.5},
 	{name="lake_waves_2_variety", length=13.1}
@@ -217,7 +216,7 @@ local get_ambience = function(player)
 			return {lava=lava}
 		end
 	end
-	if nodes_in_range(pos, 6, "default:water_flowing")>45 then
+	if nodes_in_range(pos, 7, "default:water_flowing")>5 then
 		if music then
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2, music=music}
 		else
@@ -439,8 +438,8 @@ local stop_sound = function(still_playing, player)
 		if list.handler[player_name] ~= nil then
 			if list.on_stop ~= nil then				
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
-		--		minetest.chat_send_all("list.on_stop " .. list.on_stop  )				
-				played_on_start = false
+				minetest.chat_send_all("list.on_stop " .. list.on_stop  )				
+		--		played_on_start = false
 			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil

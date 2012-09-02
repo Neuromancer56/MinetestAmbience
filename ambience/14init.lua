@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .19
+--Ambiance Configuration for version .14
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -17,10 +17,6 @@ local cave_frequency = 10  --bats
 local cave_volume = 1.0  
 local cave_frequent_frequency = 70  --drops of water dripping
 local cave_frequent_volume = 1.0 
-local beach_frequency = 20  --seagulls
-local beach_volume = 1.0  
-local beach_frequent_frequency = 1000  --waves
-local beach_frequent_volume = 1.0 
 local water_frequent_frequency = 1000  --water sounds
 local water_frequent_volume = 1.0 
 local music_frequency = 7  --music (suggestion: keep this one low like around 6)
@@ -80,19 +76,6 @@ local cave_frequent = {
 	{name="Spooky_Water_Drops", length=7, gain=cave_frequent_volume}
 }
 
-local beach = {
-	handler = {},
-	frequency = beach_frequency,
-	{name="seagull", length=4.5, gain=beach_volume}
-}
-
-local beach_frequent = {
-	handler = {},
-	frequency = beach_frequent_frequency,
-	{name="fiji_beach", length=43.5, gain=beach_frequent_volume}
-}
-
-
 local water = {
 	handler = {},
 	frequency = 0,--dolphins dont fit into small lakes
@@ -110,15 +93,6 @@ local water_frequent = {
 	{name="scuba1calm2", length=8.5, gain=water_frequent_volume},
 	{name="scuba1interestingbubbles", length=11, gain=water_frequent_volume},
 	{name="scuba1tubulentbubbles", length=10.5, gain=water_frequent_volume}
-}
-
-local water_surface = {
-	handler = {},
-	frequency = 1000,
-	on_stop = "Splash",
-	on_start = "Splash",
-	{name="lake_waves_2_calm", length=9.5},
-	{name="lake_waves_2_variety", length=13.1}
 }
 
 local flowing_water = {
@@ -142,7 +116,6 @@ local lava2 = {
 	frequency = 1000,
 	{name="earth01a", length=15}
 }
-
 
 local play_music = minetest.setting_getbool("music") or false
 local music = {
@@ -197,19 +170,7 @@ local get_ambience = function(player)
 		else
 			return {water=water, water_frequent=water_frequent}
 		end
-	elseif nodename == "air" then
-		pos.y = pos.y-1.5
-		local nodename = minetest.env:get_node(pos).name
-		pos.y = pos.y+1.5
-		if string.find(nodename, "default:water") then
-			if music then
-				return {water_surface=water_surface, music=music}
-			else
-				return {water_surface}
-			end		
-		end	
 	end
-
 	if nodes_in_range(pos, 7, "default:lava_flowing")>5 or nodes_in_range(pos, 7, "default:lava_source")>5 then
 		if music then
 			return {lava=lava, lava2=lava2, music=music}		
@@ -217,21 +178,11 @@ local get_ambience = function(player)
 			return {lava=lava}
 		end
 	end
-	if nodes_in_range(pos, 6, "default:water_flowing")>45 then
+	if nodes_in_range(pos, 7, "default:water_flowing")>5 then
 		if music then
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2, music=music}
 		else
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2}
-		end
-	end	
-	pos.y = pos.y-2 
-	nodename = minetest.env:get_node(pos).name
-	--minetest.chat_send_all("Found " .. nodename .. pos.y )
-	if string.find(nodename, "default:sand") and pos.y < 5 then
-		if music then
-			return {beach=beach, beach_frequent=beach_frequent, music=music}
-		else
-			return {beach=beach, beach_frequent=beach_frequent}
 		end
 	end
 	if player:getpos().y < 0 then
@@ -302,27 +253,6 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
-	if still_playing.beach == nil then
-		local list = beach
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.beach_frequent == nil then
-		local list = beach_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-
 	if still_playing.night == nil then
 		local list = night
 		if list.handler[player_name] ~= nil then
@@ -423,32 +353,17 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
-	if still_playing.water_surface == nil then
-		local list = water_surface
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then				
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
-				played_on_start = false
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
 	if still_playing.water_frequent == nil then
 		local list = water_frequent
 		if list.handler[player_name] ~= nil then
 			if list.on_stop ~= nil then				
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
-		--		minetest.chat_send_all("list.on_stop " .. list.on_stop  )				
 				played_on_start = false
 			end
 			minetest.sound_stop(list.handler[player_name])
 			list.handler[player_name] = nil
 		end
 	end
-
-
-	
 end
 
 local timer = 0
