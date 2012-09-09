@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .19
+--Ambiance Configuration for version .25 (bugfix, -20 on last minp for sea detection.
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -23,10 +23,15 @@ local beach_frequent_frequency = 1000  --waves
 local beach_frequent_volume = 1.0 
 local water_frequent_frequency = 1000  --water sounds
 local water_frequent_volume = 1.0 
+local desert_frequency = 20  --coyote
+local desert_volume = 1.0  
+local desert_frequent_frequency = 700  --desertwind
+local desert_frequent_volume = 1.0 
 local music_frequency = 7  --music (suggestion: keep this one low like around 6)
 local music_volume = 0.3 
 --End of Config
 ----------------------------------------------------------------------------------------------------
+local counter=0--*****************
 local played_on_start = false
 local night = {
 	handler = {},
@@ -92,6 +97,18 @@ local beach_frequent = {
 	{name="fiji_beach", length=43.5, gain=beach_frequent_volume}
 }
 
+local desert = {
+	handler = {},
+	frequency = desert_frequency,
+	{name="coyote2", length=2.5, gain=desert_volume},
+	{name="RattleSnake", length=8, gain=desert_volume}
+}
+
+local desert_frequent = {
+	handler = {},
+	frequency = desert_frequent_frequency,
+	{name="DesertMonolithMed", length=34.5, gain=desert_frequent_volume}
+}
 
 local water = {
 	handler = {},
@@ -160,30 +177,60 @@ local is_daytime = function()
 	return (minetest.env:get_timeofday() > 0.2 and  minetest.env:get_timeofday() < 0.8)
 end
 
---[[old
-local nodes_in_range = function(pos, search_distance, node_name)
-	local search_p = {x=0, y=0, z=0}
-	local nodes_found = 0
-	for p_x=(pos.x-search_distance), (pos.x+search_distance) do
-		for p_y=(pos.y-search_distance), (pos.y+search_distance) do
-			for p_z=(pos.z-search_distance), (pos.z+search_distance) do
-				local search_n = minetest.env:get_node({x=p_x, y=p_y, z=p_z})
-				if search_n.name == node_name then
-					nodes_found = nodes_found + 1
-				end
-			end
-		end
-	end
-	return nodes_found
-	--minetest.chat_send_all("Range: " .. tostring(search_distance) .. " | Found (" .. node_name .. ": " .. nodes_found .. ")")
-end --]]
-
 local nodes_in_range = function(pos, search_distance, node_name)
 	minp = {x=pos.x-search_distance,y=pos.y-search_distance, z=pos.z-search_distance}
 	maxp = {x=pos.x+search_distance,y=pos.y+search_distance, z=pos.z+search_distance}
 	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)
---	minetest.chat_send_all("Found (" .. node_name .. ": " .. #nodes .. ")")
+	--minetest.chat_send_all("Found (" .. node_name .. ": " .. #nodes .. ")")
 	return #nodes
+end
+
+local nodes_in_coords = function(minp, maxp, node_name)
+	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)
+	--minetest.chat_send_all("Found (" .. node_name .. ": " .. #nodes .. ")")
+	return #nodes
+end
+
+local atleast_nodes_in_grid = function(pos, search_distance, height, node_name, threshold)
+--	counter = counter +1
+--	minetest.chat_send_all("counter: (" .. counter .. ")")
+	minp = {x=pos.x-search_distance,y=height, z=pos.z+20}
+	maxp = {x=pos.x+search_distance,y=height, z=pos.z+20}
+	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)
+--	minetest.chat_send_all("z+Found (" .. node_name .. ": " .. #nodes .. ")")
+	if #nodes >= threshold then
+		return true
+	end
+	totalnodes = #nodes
+	minp = {x=pos.x-search_distance,y=height, z=pos.z-20}
+	maxp = {x=pos.x+search_distance,y=height, z=pos.z-20}
+	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)
+--	minetest.chat_send_all("z-Found (" .. node_name .. ": " .. #nodes .. ")")
+	if #nodes >= threshold then
+		return true
+	end
+	totalnodes = totalnodes + #nodes
+	maxp = {x=pos.x+20,y=height, z=pos.z+search_distance}
+	minp = {x=pos.x+20,y=height, z=pos.z-search_distance}
+	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)	
+--	minetest.chat_send_all("x+Found (" .. node_name .. ": " .. #nodes .. ")")
+	if #nodes >= threshold then
+		return true
+	end
+	totalnodes = totalnodes + #nodes
+	maxp = {x=pos.x-20,y=height, z=pos.z+search_distance}
+	minp = {x=pos.x-20,y=height, z=pos.z-search_distance}
+	nodes = minetest.env:find_nodes_in_area(minp, maxp, node_name)	
+--	minetest.chat_send_all("x+Found (" .. node_name .. ": " .. #nodes .. ")")	
+	if #nodes >= threshold then
+		return true
+	end
+	totalnodes = totalnodes + #nodes
+--	minetest.chat_send_all("Found total(" .. totalnodes .. ")")
+	if totalnodes >= threshold*2 then
+		return true
+	end	
+	return false
 end
 
 
@@ -224,16 +271,32 @@ local get_ambience = function(player)
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2}
 		end
 	end	
-	pos.y = pos.y-2 
-	nodename = minetest.env:get_node(pos).name
-	--minetest.chat_send_all("Found " .. nodename .. pos.y )
-	if string.find(nodename, "default:sand") and pos.y < 5 then
+--if we are near sea level and there is lots of water around the area
+	if pos.y < 7 and pos.y >0 and atleast_nodes_in_grid(pos, 60, 1, "default:water_source", 51 ) then
 		if music then
 			return {beach=beach, beach_frequent=beach_frequent, music=music}
 		else
 			return {beach=beach, beach_frequent=beach_frequent}
 		end
 	end
+	
+	
+	
+	desert_in_range = (nodes_in_range(pos, 6, "default:desert_sand")+nodes_in_range(pos, 6, "default:desert_stone"))
+	--minetest.chat_send_all("desertcount: " .. desert_in_range .. ",".. pos.y )
+	if  desert_in_range >250 then
+		if music then
+			return {desert=desert, desert_frequent=desert_frequent, music=music}
+		else
+			return {desert=desert, desert_frequent=desert_frequent}
+		end
+	end	
+
+	pos.y = pos.y-2 
+	nodename = minetest.env:get_node(pos).name
+--	minetest.chat_send_all("Found " .. nodename .. pos.y )
+	
+
 	if player:getpos().y < 0 then
 		if music then
 			return {cave=cave, cave_frequent=cave_frequent, music=music}
@@ -322,7 +385,26 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
-
+	if still_playing.desert == nil then
+		local list = desert
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
+	if still_playing.desert_frequent == nil then
+		local list = desert_frequent
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
 	if still_playing.night == nil then
 		local list = night
 		if list.handler[player_name] ~= nil then

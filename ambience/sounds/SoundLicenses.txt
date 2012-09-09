@@ -71,8 +71,15 @@ ComboWind uses:
 
 --seagull, Attribution Noncommercial License., hazure,  http://www.freesound.org/people/hazure/sounds/23707/,
 
+desert:
+coyote2, Attribution License, rogerforeman, http://www.freesound.org/people/rogerforeman/sounds/68068/
+http://www.freesound.org/people/Proxima4/sounds/104319/
+Desert Monolith.wav, Creative Commons 0 License, Proxima4, http://www.freesound.org/people/Proxima4/sounds/104319/
+Rattlesnake Rattle, Public Domain, fws.gov,  http://soundbible.com/237-Rattlesnake-Rattle.html
 
 ----------------Not used yet:
+desert:
+Desert Simple.wav, Creative Commons 0 License, Proxima4, http://www.freesound.org/people/Proxima4/sounds/104320/
 
 
 
