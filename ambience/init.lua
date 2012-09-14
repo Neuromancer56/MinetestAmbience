@@ -1,5 +1,8 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .25 (bugfix, -20 on last minp for sea detection.
+--Ambiance Configuration for version .26   
+--reduced silence between swimming sounds
+--reduce number of splashes when transitioning
+--compressed swimming files.
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -27,11 +30,15 @@ local desert_frequency = 20  --coyote
 local desert_volume = 1.0  
 local desert_frequent_frequency = 700  --desertwind
 local desert_frequent_volume = 1.0 
+local swimming_frequent_frequency = 1000  --swimming splashes
+local swimming_frequent_volume = 1.0 
 local music_frequency = 7  --music (suggestion: keep this one low like around 6)
 local music_volume = 0.3 
 --End of Config
 ----------------------------------------------------------------------------------------------------
 local counter=0--*****************
+local last_x_pos = 0
+local last_z_pos = 0
 local played_on_start = false
 local night = {
 	handler = {},
@@ -67,7 +74,12 @@ local day_frequent = {
 	{name="bluejay", length=18, gain=day_frequent_volume},
 	{name="ComboWind", length=17,  gain=day_frequent_volume*3}
 }
-
+local swimming_frequent = {
+	handler = {},
+	frequency = day_frequent_frequency,
+	{name="water_swimming_splashing_breath", length=11.5, gain=swimming_frequent_volume},
+	{name="water_swimming_splashing", length=9, gain=swimming_frequent_volume}
+}
 
 local cave = {
 	handler = {},
@@ -121,7 +133,7 @@ local water_frequent = {
 	handler = {},
 	frequency = water_frequent_frequency,
 	on_stop = "drowning_gasp",
-	on_start = "Splash",
+	--on_start = "Splash",
 	{name="scuba1bubbles", length=11, gain=water_frequent_volume},
 	{name="scuba1calm", length=10},  --not sure why but sometimes I get errors when setting gain=water_frequent_volume here.
 	{name="scuba1calm2", length=8.5, gain=water_frequent_volume},
@@ -236,7 +248,8 @@ end
 
 local get_ambience = function(player)
 	local pos = player:getpos()
-	pos.y = pos.y+1.0
+	local water_surface_found = false
+	pos.y = pos.y+1.2
 	local nodename = minetest.env:get_node(pos).name
 	if string.find(nodename, "default:water") then
 		if music then
@@ -245,15 +258,24 @@ local get_ambience = function(player)
 			return {water=water, water_frequent=water_frequent}
 		end
 	elseif nodename == "air" then
-		pos.y = pos.y-1.5
+		pos.y = pos.y-1.15    --1.8
 		local nodename = minetest.env:get_node(pos).name
-		pos.y = pos.y+1.5
+		--minetest.chat_send_all("nodename found(" .. nodename .. ")")
+		pos.y = pos.y+0.95   --1.6
 		if string.find(nodename, "default:water") then
-			if music then
-				return {water_surface=water_surface, music=music}
-			else
-				return {water_surface}
-			end		
+		    
+		    if last_x_pos ~=pos.x or last_z_pos ~=pos.z then
+		    	last_x_pos =pos.x
+		    	last_z_pos =pos.z
+				if music then
+					return {swimming_frequent=swimming_frequent, music=music}
+				else
+					return {swimming_frequent}
+				end		
+		    end
+		    last_x_pos =pos.x
+		    last_z_pos =pos.z
+		    water_surface_found = true	
 		end	
 	end
 
@@ -271,15 +293,23 @@ local get_ambience = function(player)
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2}
 		end
 	end	
+	if water_surface_found then
+		if music then
+			return {water_surface=water_surface, music=music}
+		else
+			return {water_surface}
+		end	
+	end
+
 --if we are near sea level and there is lots of water around the area
 	if pos.y < 7 and pos.y >0 and atleast_nodes_in_grid(pos, 60, 1, "default:water_source", 51 ) then
 		if music then
 			return {beach=beach, beach_frequent=beach_frequent, music=music}
 		else
 			return {beach=beach, beach_frequent=beach_frequent}
-		end
+		end		
 	end
-	
+
 	
 	
 	desert_in_range = (nodes_in_range(pos, 6, "default:desert_sand")+nodes_in_range(pos, 6, "default:desert_stone"))
@@ -357,6 +387,16 @@ local stop_sound = function(still_playing, player)
 	end
 	if still_playing.cave_frequent == nil then
 		local list = cave_frequent
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end
+	if still_playing.swimming_frequent == nil then
+		local list = swimming_frequent
 		if list.handler[player_name] ~= nil then
 			if list.on_stop ~= nil then
 				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
