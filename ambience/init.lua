@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .27   
---Fixed  removed occasional beach wave sound when treading water
--- was caused by the bottom node we find is air which leads to surface noise!
+--Ambiance Configuration for version .28   
+--working on  treading water already trumps beach, standing in water should not.
+--moving while standing in water should splash not swim.
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -38,6 +38,10 @@ local music_volume = 0.3
 local counter=0--*****************
 local last_x_pos = 0
 local last_z_pos = 0
+local node_under_feet
+local node_at_upper_body
+local node_at_lower_body
+
 local played_on_start = false
 local night = {
 	handler = {},
@@ -148,6 +152,11 @@ local water_surface = {
 	{name="lake_waves_2_calm", length=9.5},
 	{name="lake_waves_2_variety", length=13.1}
 }
+local splashing_water = {
+	handler = {},
+	frequency = 1000,
+	{name="Splash", length=1.22, gain=1}
+}
 
 local flowing_water = {
 	handler = {},
@@ -244,39 +253,70 @@ local atleast_nodes_in_grid = function(pos, search_distance, height, node_name, 
 	return false
 end
 
+local get_immediate_nodes = function(pos)
+	pos.y = pos.y-1
+	node_under_feet = minetest.env:get_node(pos).name
+	pos.y = pos.y+2.2
+	node_at_upper_body = minetest.env:get_node(pos).name
+	pos.y = pos.y-1.19   
+	node_at_lower_body = minetest.env:get_node(pos).name
+	pos.y = pos.y+0.99   --1.6
+	--minetest.chat_send_all("node_under_feet(" .. nodename .. ")")
+end 
+
 
 local get_ambience = function(player)
+	local player_is_moving = false
+	local standing_in_water = false
 	local pos = player:getpos()
-	local water_surface_found = false
-	pos.y = pos.y+1.2
-	local nodename = minetest.env:get_node(pos).name
-	--minetest.chat_send_all("top nodename found(" .. nodename .. ")")
-	if string.find(nodename, "default:water") then
+	get_immediate_nodes(pos)
+
+	if last_x_pos ~=pos.x or last_z_pos ~=pos.z then 
+		player_is_moving = true 
+	end
+	last_x_pos =pos.x
+	last_z_pos =pos.z	
+	
+	if string.find(node_at_upper_body, "default:water") then
 		if music then
 			return {water=water, water_frequent=water_frequent, music=music}
 		else
 			return {water=water, water_frequent=water_frequent}
 		end
-	elseif nodename == "air" then
-		pos.y = pos.y-1.19    --1.8
-		local nodename = minetest.env:get_node(pos).name
-		--minetest.chat_send_all("bottom nodename found(" .. nodename .. ")")
-		pos.y = pos.y+0.99   --1.6
-		if string.find(nodename, "default:water") then
+	elseif node_at_upper_body == "air" then
+		if string.find(node_at_lower_body, "default:water") then
 		    --minetest.chat_send_all("bottom counted as water")
-		    if last_x_pos ~=pos.x or last_z_pos ~=pos.z then
-		    --minetest.chat_send_all("swimming move found")
-		    	last_x_pos =pos.x
-		    	last_z_pos =pos.z
-				if music then
-					return {swimming_frequent=swimming_frequent, music=music}
-				else
-					return {swimming_frequent}
-				end		
+			--we found air at upperbody, and water at lower body.  Now there are 4 possibilities:
+			--Key: under feet, moving or not
+			--swimming 			w, m swimming
+			--walking in water  nw, m splashing
+			--treading water    w, nm  sloshing
+			--standing in water nw, nm	beach trumps, then sloshing					
+			if player_is_moving then
+				if string.find(node_under_feet, "default:water") then
+					if music then
+						return {swimming_frequent=swimming_frequent, music=music}
+					else
+						return {swimming_frequent}
+					end	
+				else --didn't find water under feet: walking in water			
+					if music then
+						return {splashing_water=splashing_water, music=music}
+					else
+						return {splashing_water}
+					end	
+				end
+			else--player is not moving
+				if string.find(node_under_feet, "default:water") then
+					if music then
+						return {water_surface=water_surface, music=music}
+					else
+						return {water_surface}
+					end	
+				else --didn't find water under feet				
+					standing_in_water = true
+				end			
 		    end
-		    last_x_pos =pos.x
-		    last_z_pos =pos.z
-		    water_surface_found = true	
 		end	
 	end
 
@@ -294,13 +334,7 @@ local get_ambience = function(player)
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2}
 		end
 	end	
-	if water_surface_found then
-		if music then
-			return {water_surface=water_surface, music=music}
-		else
-			return {water_surface}
-		end	
-	end
+
 
 --if we are near sea level and there is lots of water around the area
 	if pos.y < 7 and pos.y >0 and atleast_nodes_in_grid(pos, 60, 1, "default:water_source", 51 ) then
@@ -310,7 +344,13 @@ local get_ambience = function(player)
 			return {beach=beach, beach_frequent=beach_frequent}
 		end		
 	end
-
+	if standing_in_water then
+		if music then
+			return {water_surface=water_surface, music=music}
+		else
+			return {water_surface}
+		end	
+	end
 	
 	
 	desert_in_range = (nodes_in_range(pos, 6, "default:desert_sand")+nodes_in_range(pos, 6, "default:desert_stone"))
