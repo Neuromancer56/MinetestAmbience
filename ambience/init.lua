@@ -1,8 +1,7 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .26   
---reduced silence between swimming sounds
---reduce number of splashes when transitioning
---compressed swimming files.
+--Ambiance Configuration for version .27   
+--Fixed  removed occasional beach wave sound when treading water
+-- was caused by the bottom node we find is air which leads to surface noise!
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -251,6 +250,7 @@ local get_ambience = function(player)
 	local water_surface_found = false
 	pos.y = pos.y+1.2
 	local nodename = minetest.env:get_node(pos).name
+	--minetest.chat_send_all("top nodename found(" .. nodename .. ")")
 	if string.find(nodename, "default:water") then
 		if music then
 			return {water=water, water_frequent=water_frequent, music=music}
@@ -258,13 +258,14 @@ local get_ambience = function(player)
 			return {water=water, water_frequent=water_frequent}
 		end
 	elseif nodename == "air" then
-		pos.y = pos.y-1.15    --1.8
+		pos.y = pos.y-1.19    --1.8
 		local nodename = minetest.env:get_node(pos).name
-		--minetest.chat_send_all("nodename found(" .. nodename .. ")")
-		pos.y = pos.y+0.95   --1.6
+		--minetest.chat_send_all("bottom nodename found(" .. nodename .. ")")
+		pos.y = pos.y+0.99   --1.6
 		if string.find(nodename, "default:water") then
-		    
+		    --minetest.chat_send_all("bottom counted as water")
 		    if last_x_pos ~=pos.x or last_z_pos ~=pos.z then
+		    --minetest.chat_send_all("swimming move found")
 		    	last_x_pos =pos.x
 		    	last_z_pos =pos.z
 				if music then
