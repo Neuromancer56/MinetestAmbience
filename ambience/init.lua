@@ -1,7 +1,12 @@
 --------------------------------------------------------------------------------------------------------
---Ambiance Configuration for version .28   
---working on  treading water already trumps beach, standing in water should not.
---moving while standing in water should splash not swim.
+--Ambiance Configuration for version .29   
+--working on Flying
+--PROB:  wind stops short even though it says we are still flying and don't hear the start sound.
+--really BIG prob, it ruins water meaning you hear beach while treading water.  (find out if still hear it in .28) because
+--it is fairly rare in .29
+--need a separate onstart variable for flying?
+--removing unneeded stuff.
+
 
 local max_frequency_all = 1000 --the larger you make this number the lest frequent ALL sounds will happen recommended values between 100-2000.
 
@@ -37,12 +42,15 @@ local music_volume = 0.3
 ----------------------------------------------------------------------------------------------------
 local counter=0--*****************
 local last_x_pos = 0
+local last_y_pos = 0
 local last_z_pos = 0
 local node_under_feet
 local node_at_upper_body
 local node_at_lower_body
+local node_3_under_feet
 
 local played_on_start = false
+
 local night = {
 	handler = {},
 	frequency = night_frequency,
@@ -123,6 +131,14 @@ local desert_frequent = {
 	handler = {},
 	frequency = desert_frequent_frequency,
 	{name="DesertMonolithMed", length=34.5, gain=desert_frequent_volume}
+}
+
+local flying = {
+	handler = {},
+	frequency = 1000,
+	on_start = "crystal_airlines",
+	on_stop = "nothing_yet",
+	{name="ComboWind", length=17,  gain=1}
 }
 
 local water = {
@@ -256,26 +272,39 @@ end
 local get_immediate_nodes = function(pos)
 	pos.y = pos.y-1
 	node_under_feet = minetest.env:get_node(pos).name
+	pos.y = pos.y-3
+	node_3_under_feet = minetest.env:get_node(pos).name
+	pos.y = pos.y+3
 	pos.y = pos.y+2.2
 	node_at_upper_body = minetest.env:get_node(pos).name
 	pos.y = pos.y-1.19   
 	node_at_lower_body = minetest.env:get_node(pos).name
-	pos.y = pos.y+0.99   --1.6
+	pos.y = pos.y+0.99  
 	--minetest.chat_send_all("node_under_feet(" .. nodename .. ")")
 end 
 
 
 local get_ambience = function(player)
-	local player_is_moving = false
+	local player_is_climbing = false
+	local player_is_descending = false
+	local player_is_moving_horiz = false
 	local standing_in_water = false
 	local pos = player:getpos()
 	get_immediate_nodes(pos)
 
 	if last_x_pos ~=pos.x or last_z_pos ~=pos.z then 
-		player_is_moving = true 
+		player_is_moving_horiz = true 
 	end
+	if pos.y > last_y_pos+.5   then 
+		player_is_climbing = true 
+	end
+	if pos.y < last_y_pos-.5  then 
+		player_is_descending = true 
+	end
+	
 	last_x_pos =pos.x
 	last_z_pos =pos.z	
+	last_y_pos =pos.y
 	
 	if string.find(node_at_upper_body, "default:water") then
 		if music then
@@ -284,7 +313,7 @@ local get_ambience = function(player)
 			return {water=water, water_frequent=water_frequent}
 		end
 	elseif node_at_upper_body == "air" then
-		if string.find(node_at_lower_body, "default:water") then
+		if string.find(node_at_lower_body, "default:water") or string.find(node_under_feet, "default:water") then
 		    --minetest.chat_send_all("bottom counted as water")
 			--we found air at upperbody, and water at lower body.  Now there are 4 possibilities:
 			--Key: under feet, moving or not
@@ -292,7 +321,7 @@ local get_ambience = function(player)
 			--walking in water  nw, m splashing
 			--treading water    w, nm  sloshing
 			--standing in water nw, nm	beach trumps, then sloshing					
-			if player_is_moving then
+			if player_is_moving_horiz then
 				if string.find(node_under_feet, "default:water") then
 					if music then
 						return {swimming_frequent=swimming_frequent, music=music}
@@ -306,7 +335,7 @@ local get_ambience = function(player)
 						return {splashing_water}
 					end	
 				end
-			else--player is not moving
+			else--player is not moving: treading water
 				if string.find(node_under_feet, "default:water") then
 					if music then
 						return {water_surface=water_surface, music=music}
@@ -319,6 +348,41 @@ local get_ambience = function(player)
 		    end
 		end	
 	end
+--	minetest.chat_send_all("----------")
+--	if not player_is_moving_horiz then
+--		minetest.chat_send_all("not moving horiz")
+--	else
+--		minetest.chat_send_all("moving horiz")
+--	end	
+--	minetest.chat_send_all("nub:" ..node_at_upper_body)
+--	minetest.chat_send_all("nlb:" ..node_at_lower_body)
+--	minetest.chat_send_all("nuf:" ..node_under_feet)
+--	minetest.chat_send_all("----------")
+	
+	
+--	if player_is_moving_horiz then
+--		minetest.chat_send_all("playermoving")
+--	end
+--	if player_is_climbing then
+--			minetest.chat_send_all("player Climbing")
+--	end
+--	minetest.chat_send_all("nub:" ..node_at_upper_body)
+--	minetest.chat_send_all("nlb:" ..node_at_lower_body)
+--	minetest.chat_send_all("nuf:" ..node_under_feet)
+--	minetest.chat_send_all("n3uf:" ..node_3_under_feet)
+--	
+	local air_or_ignore = {air=true,ignore=true}
+	--minetest.chat_send_all(air_or_ignore[node_under_feet])
+	if (player_is_moving_horiz or player_is_climbing) and air_or_ignore[node_at_upper_body] and air_or_ignore[node_at_lower_body]
+	 and air_or_ignore[node_under_feet] and air_or_ignore[node_3_under_feet] and not player_is_descending then 
+	--minetest.chat_send_all("flying!!!!")	
+		if music then
+			return {flying=flying, music=music}
+		else
+			return {flying}
+		end	
+	end
+	--minetest.chat_send_all("not flying!!!!")	
 
 	if nodes_in_range(pos, 7, "default:lava_flowing")>5 or nodes_in_range(pos, 7, "default:lava_source")>5 then
 		if music then
@@ -363,8 +427,8 @@ local get_ambience = function(player)
 		end
 	end	
 
-	pos.y = pos.y-2 
-	nodename = minetest.env:get_node(pos).name
+--	pos.y = pos.y-2 
+--	nodename = minetest.env:get_node(pos).name
 --	minetest.chat_send_all("Found " .. nodename .. pos.y )
 	
 
@@ -609,8 +673,30 @@ local stop_sound = function(still_playing, player)
 			list.handler[player_name] = nil
 		end
 	end
-
-
+	if still_playing.flying == nil then
+		--minetest.chat_send_all("begin stop flying "   )
+		local list = flying
+		if list.handler[player_name] ~= nil then
+		--	minetest.chat_send_all("handler flying "   )
+			if list.on_stop ~= nil then
+			--	minetest.chat_send_all("onstop flying"   )
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+				played_on_start = false
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end	
+	if still_playing.splashing_water == nil then
+		local list = splashing_water
+		if list.handler[player_name] ~= nil then
+			if list.on_stop ~= nil then
+				minetest.sound_play(list.on_stop, {to_player=player:get_player_name()})
+			end
+			minetest.sound_stop(list.handler[player_name])
+			list.handler[player_name] = nil
+		end
+	end	
 	
 end
 
@@ -626,11 +712,21 @@ minetest.register_globalstep(function(dtime)
 		local ambiences = get_ambience(player)
 		stop_sound(ambiences, player)
 		for _,ambience in pairs(ambiences) do
-			if math.random(1, 1000) <= ambience.frequency then
+			if math.random(1, 1000) <= ambience.frequency then			
+--				if(played_on_start) then
+--				--	minetest.chat_send_all("playedOnStart "  )
+--				else
+--				--	minetest.chat_send_all("FALSEplayedOnStart "  )
+--				end
 				if ambience.on_start ~= nil and played_on_start == false then
 					played_on_start = true
 					minetest.sound_play(ambience.on_start, {to_player=player:get_player_name()})					
 				end
+			--	minetest.chat_send_all("ambience: " ..ambience )
+			--	if ambience.on_start ~= nil and played_on_start_flying == false then
+			--		played_on_start_flying = true
+			--		minetest.sound_play(ambience.on_start, {to_player=player:get_player_name()})					
+			--	end
 				play_sound(player, ambience, math.random(1, #ambience))
 			end
 		end

@@ -77,6 +77,9 @@ http://www.freesound.org/people/Proxima4/sounds/104319/
 Desert Monolith.wav, Creative Commons 0 License, Proxima4, http://www.freesound.org/people/Proxima4/sounds/104319/
 Rattlesnake Rattle, Public Domain, fws.gov,  http://soundbible.com/237-Rattlesnake-Rattle.html
 
+flying:
+crystal_airlines: Attribution License, suonho, http://www.freesound.org/people/suonho/sounds/56364/
+
 ----------------Not used yet:
 desert:
 Desert Simple.wav, Creative Commons 0 License, Proxima4, http://www.freesound.org/people/Proxima4/sounds/104320/
