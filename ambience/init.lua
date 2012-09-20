@@ -1,8 +1,9 @@
 --------------------------------------------------------------------------------------------------------
---Ambience Configuration for version .30   
---added music volume /mvol 0-3.3 music gain gets multiplied by this.
---added sound volume /mvol 0-1 sound gain gets multiplied by this.
+--Ambience Configuration for version .31
 --Working on:
+--removing magic leap when not enough air under feet.
+
+
 --find out why wind stops while flying
 --add an extra node near feet to handle treading water as a special case, and don't have to use node under feet. which gets
 	--invoked when staning on a ledge near water.
@@ -240,7 +241,7 @@ local nodes_in_coords = function(minp, maxp, node_name)
 end
 
 local atleast_nodes_in_grid = function(pos, search_distance, height, node_name, threshold)
---	counter = counter +1
+	counter = counter +1
 --	minetest.chat_send_all("counter: (" .. counter .. ")")
 	minp = {x=pos.x-search_distance,y=height, z=pos.z+20}
 	maxp = {x=pos.x+search_distance,y=height, z=pos.z+20}
@@ -384,9 +385,18 @@ local get_ambience = function(player)
 --	minetest.chat_send_all("n3uf:" ..node_3_under_feet)
 --	
 	local air_or_ignore = {air=true,ignore=true}
+	minp = {x=pos.x-3,y=pos.y-4, z=pos.z-3}
+	maxp = {x=pos.x+3,y=pos.y-1, z=pos.z+3}
+	local air_under_player = nodes_in_coords(minp, maxp, "air")
+	local ignore_under_player = nodes_in_coords(minp, maxp, "ignore")
+	air_plus_ignore_under = air_under_player + ignore_under_player
+--	minetest.chat_send_all("airUnder:" ..air_under_player)
+--	minetest.chat_send_all("ignoreUnder:" ..ignore_under_player)
+--	minetest.chat_send_all("a+i:" ..air_plus_ignore_under)
+--	minetest.chat_send_all("counter: (" .. counter .. "-----------------)")
 	--minetest.chat_send_all(air_or_ignore[node_under_feet])
 	if (player_is_moving_horiz or player_is_climbing) and air_or_ignore[node_at_upper_body] and air_or_ignore[node_at_lower_body]
-	 and air_or_ignore[node_under_feet] and air_or_ignore[node_3_under_feet] and not player_is_descending then 
+	 and air_or_ignore[node_under_feet] and air_plus_ignore_under == 196 and not player_is_descending then 
 	--minetest.chat_send_all("flying!!!!")	
 		if music then
 			return {flying=flying, music=music}
