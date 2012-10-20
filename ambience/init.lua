@@ -1,5 +1,7 @@
 --------------------------------------------------------------------------------------------------------
---Ambience Configuration for version .31
+--Ambience Configuration for version .34
+--Added Faraway & Ethereal by Amethystium
+
 --Working on:
 --removing magic leap when not enough air under feet.
 
@@ -17,9 +19,9 @@ local night_frequency = 20  --owls, wolves
 local night_volume = 0.9  
 local night_frequent_frequency = 150  --crickets
 local night_frequent_volume = 0.9
-local day_frequency = 100  --crow, bluejay, cardinal
+local day_frequency = 80  --crow, bluejay, cardinal
 local day_volume = 0.9 
-local day_frequent_frequency = 1000  --crow, bluejay, cardinal
+local day_frequent_frequency = 250  --crow, bluejay, cardinal
 local day_frequent_volume = 0.18
 local cave_frequency = 10  --bats
 local cave_volume = 1.0  
@@ -214,11 +216,15 @@ local music = {
 	handler = {},
 	frequency = music_frequency,
 	is_music=true,
-	{name="mtest", length=4*60+33, gain=music_volume},
-	{name="echos", length=2*60+26, gain=music_volume},
-	{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
+	{name="StrangelyBeautifulShort", length=3*60+.5, gain=music_volume},
+	{name="AvalonShort", length=2*60+58, gain=music_volume},
+	--{name="mtest", length=4*60+33, gain=music_volume},
+	--{name="echos", length=2*60+26, gain=music_volume},
+	--{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
 	{name="eastern_feeling", length=3*60+51, gain=music_volume},
-	{name="Mass_Effect_Uncharted_Worlds", length=2*60+29, gain=music_volume},
+	--{name="Mass_Effect_Uncharted_Worlds", length=2*60+29, gain=music_volume},
+	{name="EtherealShort", length=3*60+4, gain=music_volume},
+	{name="FarawayShort", length=3*60+5, gain=music_volume},
 	{name="dark_ambiance", length=44, gain=music_volume}
 }
 

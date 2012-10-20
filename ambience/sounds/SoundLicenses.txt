@@ -1,21 +1,20 @@
 --------------Music Lic:
+Amethystium:
+--Avalon
+--Ethereal
+--Faraway
+--Strangely Beautiful
+
+"I can't give you a formal license (legal paperwork) for it, but as long as it's non-commercial I can give you my personal blessing and guarantee that you won't get in trouble for using it :) If that's enough just feel free to use any of my tracks. Please credit the music properly though, and include a link to www.amethystium.com and www.am.mu (it's the same site right now, but the latter will be a label/music store site soon).
+Best regards,
+Øystein Ramfjord"
+
 Jordach:
---mtest
 --dark_ambiance
 --eastern_feeling
 These sounds are used for the Mod for Minetest; Ambiance.
 The included sounds are http://creativecommons.org/licenses/by-nc-sa/3.0/ 
-
- 313hummer (Jordan Craige)  
---FoamOfTheSea http://soundcloud.com/jordan-craige/foam-of-the-sea
---echos  http://soundcloud.com/jordan-craige/echos-1
-Creative Commons Attribution license (reuse allowed)  Attribution 3.0 Unported (CC BY 3.0)
-
-xi-intersection:
-http://soundcloud.com/xi-intersection/mass-effect-uncharted-worlds  Creative Commons License
---not used:
-http://soundcloud.com/xi-intersection/donkey-kong-country-2-flight
-http://soundcloud.com/kogyo/kogyo-skalar-m1
+Not Used:--mtest
 
 -----------Sound Lic:
 --Nightime Sound, Recorded by Mike Koenig, License: Attribution 3.0 http://soundbible.com/951-Nightime.html
@@ -84,7 +83,16 @@ crystal_airlines: Attribution License, suonho, http://www.freesound.org/people/s
 desert:
 Desert Simple.wav, Creative Commons 0 License, Proxima4, http://www.freesound.org/people/Proxima4/sounds/104320/
 
+ 313hummer (Jordan Craige)  
+--echos  http://soundcloud.com/jordan-craige/echos-1
+Creative Commons Attribution license (reuse allowed)  Attribution 3.0 Unported (CC BY 3.0)
+Not Used:--FoamOfTheSea http://soundcloud.com/jordan-craige/foam-of-the-sea
 
+xi-intersection:
+http://soundcloud.com/xi-intersection/mass-effect-uncharted-worlds  Creative Commons License
+--not used:
+http://soundcloud.com/xi-intersection/donkey-kong-country-2-flight
+http://soundcloud.com/kogyo/kogyo-skalar-m1
 
 lava:
 http://www.freesound.org/people/Halion/sounds/17785/ (almost as good cc)  (combine with rocks falling?)
@@ -101,3 +109,10 @@ http://www.freesound.org/people/juskiddink/sounds/78955/ aspen tree in wind
 http://www.freesound.org/people/Benboncan/sounds/69761/ wind in hedge birds animals
 
 
+ButterflyTea:
+Creative Commons : Attribution-Noncommercial-Share Alike 3.0
+http://www.jamendo.com/en/track/904012/dance-of-magical-flowers
+http://www.jamendo.com/en/track/904013/magic-of-the-seventh-world
+http://www.jamendo.com/en/track/904016/in-search-of-the-soul
+
+zero-project
