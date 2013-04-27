@@ -216,15 +216,15 @@ local music = {
 	handler = {},
 	frequency = music_frequency,
 	is_music=true,
-	{name="StrangelyBeautifulShort", length=3*60+.5, gain=music_volume},
-	{name="AvalonShort", length=2*60+58, gain=music_volume*1.5},
+	{name="StrangelyBeautifulShort", length=3*60+.5, gain=music_volume*.7},
+	{name="AvalonShort", length=2*60+58, gain=music_volume*1.4},
 	--{name="mtest", length=4*60+33, gain=music_volume},
 	--{name="echos", length=2*60+26, gain=music_volume},
 	--{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
 	{name="eastern_feeling", length=3*60+51, gain=music_volume},
 	--{name="Mass_Effect_Uncharted_Worlds", length=2*60+29, gain=music_volume},
-	{name="EtherealShort", length=3*60+4, gain=music_volume},
-	{name="FarawayShort", length=3*60+5, gain=music_volume},
+	{name="EtherealShort", length=3*60+4, gain=music_volume*.7},
+	{name="FarawayShort", length=3*60+5, gain=music_volume*.7},
 	{name="dark_ambiance", length=44, gain=music_volume}
 }
 
@@ -401,15 +401,15 @@ local get_ambience = function(player)
 --	minetest.chat_send_all("a+i:" ..air_plus_ignore_under)
 --	minetest.chat_send_all("counter: (" .. counter .. "-----------------)")
 	--minetest.chat_send_all(air_or_ignore[node_under_feet])
-	if (player_is_moving_horiz or player_is_climbing) and air_or_ignore[node_at_upper_body] and air_or_ignore[node_at_lower_body]
-	 and air_or_ignore[node_under_feet] and air_plus_ignore_under == 196 and not player_is_descending then 
+--	if (player_is_moving_horiz or player_is_climbing) and air_or_ignore[node_at_upper_body] and air_or_ignore[node_at_lower_body]
+--	 and air_or_ignore[node_under_feet] and air_plus_ignore_under == 196 and not player_is_descending then 
 	--minetest.chat_send_all("flying!!!!")	
-		if music then
-			return {flying=flying, music=music}
-		else
-			return {flying}
-		end	
-	end
+	--	if music then
+		--	return {flying=flying, music=music}
+	--	else
+		---	return {flying}
+--		end	
+--	end
 	--minetest.chat_send_all("not flying!!!!")	
 
 	if nodes_in_range(pos, 7, "default:lava_flowing")>5 or nodes_in_range(pos, 7, "default:lava_source")>5 then
