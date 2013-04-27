@@ -217,7 +217,7 @@ local music = {
 	frequency = music_frequency,
 	is_music=true,
 	{name="StrangelyBeautifulShort", length=3*60+.5, gain=music_volume},
-	{name="AvalonShort", length=2*60+58, gain=music_volume},
+	{name="AvalonShort", length=2*60+58, gain=music_volume*1.5},
 	--{name="mtest", length=4*60+33, gain=music_volume},
 	--{name="echos", length=2*60+26, gain=music_volume},
 	--{name="FoamOfTheSea", length=1*60+50, gain=music_volume},
