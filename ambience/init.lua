@@ -150,7 +150,7 @@ local desert_frequent = {
 local flying = {
 	handler = {},
 	frequency = 1000,
-	on_start = "crystal_airlines",
+	on_start = "nothing_yet",
 	on_stop = "nothing_yet",
 	{name="ComboWind", length=17,  gain=1}
 }
