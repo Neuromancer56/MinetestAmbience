@@ -772,27 +772,27 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
-minetest.register_on_newplayer(function(player)
-    volume[player:get_player_name()] = {music: MUSICVOLUME, sound: SOUNDVOLUME}
+minetest.register_on_joinplayer(function(player)
+    volume[player:get_player_name()] = {music=MUSICVOLUME, sound=SOUNDVOLUME}
 end)
 minetest.register_chatcommand("volume", {
     description = "View sliders to set sound a music volume",
     func = function(name,param)
         minetest.show_formspec(name, "ambience:volume",
-            "size[2,4]" ..
+            "size[6,5]" ..
             "label[0,0;Music]" ..
-            "scrollbar[0,1;2,1;horizontal;music;" .. volume[name].music .. "]"
+            "scrollbar[0,1;6,1;horizontal;music;" .. volume[name].music * 1000 .. "]" ..
             "label[0,2;Sound]" ..
-            "scrollbar[0,3;2,1;horizontal;sound;" .. volume[name].sound .. "]");
+            "scrollbar[0,3;6,1;horizontal;sound;" .. volume[name].sound * 1000 .. "]" ..
+            "button_exit[2,4;2,1;quit;Done]")
     end,
 })
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "ambience:volume" then
+    if formname ~= "ambience:volume" or fields.quit == "true" then
         return false
     end
-
-    volume[player:get_player_name()].music = fields.music / 1000
-    volume[player:get_player_name()].sound = fields.sound / 1000
+    volume[player:get_player_name()].music = tonumber(string.split(fields.music,":")[2]) / 1000
+    volume[player:get_player_name()].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
     return true
 end)
 minetest.register_chatcommand("svol", {
