@@ -802,16 +802,18 @@ minetest.register_chatcommand("volume", {
     end,
 })
 minetest.register_on_player_receive_fields(function(player, formname, fields)
-    if formname ~= "ambience:volume" or fields.quit == "true" then
+    if formname ~= "ambience:volume" then
         return false
     end
-    volume[player:get_player_name()].music = tonumber(string.split(fields.music,":")[2]) / 1000
-    volume[player:get_player_name()].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
-    if fields.quit == "Done" then
+    minetest.log(dump(fields))
+    if fields.quit ~= "true" then
+        volume[player:get_player_name()].music = tonumber(string.split(fields.music,":")[2]) / 1000
+        volume[player:get_player_name()].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
+    end
+    if fields.quit then
         local file, err = io.open(world_path.."/ambience_volumes", "w")
         if not err then
             for item in pairs(volume) do
-                minetest.log(dump(item))
                 file:write(item..":"..volume[item].music..":"..volume[item].sound)
             end
             file:close()
