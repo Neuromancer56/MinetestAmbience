@@ -52,6 +52,7 @@ local ambiences
 local counter=0--*****************
 local SOUNDVOLUME = 1
 local MUSICVOLUME = 1
+local volume = {};
 local sound_vol = 1
 local last_x_pos = 0
 local last_y_pos = 0
@@ -489,10 +490,10 @@ local play_sound = function(player, list, number, is_music)
 		local gain = 1.0
 		if list[number].gain ~= nil then
 			if is_music then 				
-				gain = list[number].gain*MUSICVOLUME
+				gain = list[number].gain*volume[player_name].music
 				--minetest.chat_send_all("gain music: " .. gain )
 			else
-				gain = list[number].gain*SOUNDVOLUME 
+				gain = list[number].gain*volume[player_name].sound
 				--minetest.chat_send_all("gain sound: " .. gain )
 			end
 		end
@@ -771,6 +772,29 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
+minetest.register_on_newplayer(function(player)
+    volume[player:get_player_name()] = {music: MUSICVOLUME, sound: SOUNDVOLUME}
+end)
+minetest.register_chatcommand("volume", {
+    description = "View sliders to set sound a music volume",
+    func = function(name,param)
+        minetest.show_formspec(name, "ambience:volume",
+            "size[2,4]" ..
+            "label[0,0;Music]" ..
+            "scrollbar[0,1;2,1;horizontal;music;" .. volume[name].music .. "]"
+            "label[0,2;Sound]" ..
+            "scrollbar[0,3;2,1;horizontal;sound;" .. volume[name].sound .. "]");
+    end,
+})
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+    if formname ~= "ambience:volume" then
+        return false
+    end
+
+    volume[player:get_player_name()].music = fields.music / 1000
+    volume[player:get_player_name()].sound = fields.sound / 1000
+    return true
+end)
 minetest.register_chatcommand("svol", {
 	params = "<svol>",
 	description = "set volume of sounds, default 1 normal volume.",
