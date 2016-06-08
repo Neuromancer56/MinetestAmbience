@@ -631,7 +631,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         local file, err = io.open(world_path.."/ambience_volumes", "w")
         if not err then
             for item in pairs(volume) do
-                file:write(item..":"..volume[item].music..":"..volume[item].sound)
+                file:write(item..":"..volume[item].music..":"..volume[item].sound.."\n")
             end
             file:close()
         end
