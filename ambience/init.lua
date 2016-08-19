@@ -610,12 +610,13 @@ minetest.register_chatcommand("volume", {
     description = "View sliders to set sound a music volume",
     func = function(name,param)
         minetest.show_formspec(name, "ambience:volume",
-            "size[6,5]" ..
-            "label[0,0;Music]" ..
-            "scrollbar[0,1;6,1;horizontal;music;" .. volume[name].music * 1000 .. "]" ..
-            "label[0,2;Sound]" ..
-            "scrollbar[0,3;6,1;horizontal;sound;" .. volume[name].sound * 1000 .. "]" ..
-            "button_exit[2,4;2,1;quit;Done]")
+            "size[6,3.5]" ..
+            "label[0,0.5;Music]" ..
+            "scrollbar[0,1;5.8,0.4;horizontal;music;" .. volume[name].music * 1000 .. "]" ..
+            "label[0,1.5;Sound]" ..
+            "scrollbar[0,2;5.8,0.4;horizontal;sound;" .. volume[name].sound * 1000 .. "]" ..
+            "button_exit[2,2.8;2,0.8;quit;Done]"
+            )
     end,
 })
 minetest.register_on_player_receive_fields(function(player, formname, fields)
