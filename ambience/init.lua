@@ -53,6 +53,7 @@ local counter=0--*****************
 local SOUNDVOLUME = 1
 local MUSICVOLUME = 1
 local sound_vol = 1
+local volume = {}
 local last_x_pos = 0
 local last_y_pos = 0
 local last_z_pos = 0
@@ -61,9 +62,21 @@ local node_at_upper_body
 local node_at_lower_body
 local node_3_under_feet
 local played_on_start = false
+local world_path = minetest.get_worldpath()
 
+local function load_volumes()
+    local file, err = io.open(world_path.."/ambience_volumes", "r")
+    if err then
+        return 
+    end
+    for line in file:lines() do
+        local config_line = string.split(line, ":")
+        volume[config_line[1]] = {music=config_line[2],sound=config_line[3]}
+    end
+    file:close()
+end
 
-
+load_volumes()
 
 local night = {
 	handler = {},
@@ -226,6 +239,30 @@ local music = {
 	{name="EtherealShort", length=3*60+4, gain=music_volume*.7},
 	{name="FarawayShort", length=3*60+5, gain=music_volume*.7},
 	{name="dark_ambiance", length=44, gain=music_volume}
+}
+
+local ambienceList = {
+    night=night,
+    night_frequent=night_frequent,
+    day=day,
+    day_frequent=day_frequent,
+    swimming_frequent=swimming_frequent,
+    cave=cave,
+    cave_frequent=cave_frequent,
+    beach=beach,
+    beach_frequent=beach_frequent,
+    desert=desert,
+    desert_frequent=desert_frequent,
+    flying=flying,
+    water=water,
+    water_frequent=water_frequent,
+    water_surface=water_surface,
+    splashing_water=splashing_water,
+    flowing_water=flowing_water,
+    flowing_water2=flowing_water2,
+    lava=lava,
+    lava2=lava2,
+    music=music,
 }
 
 local is_daytime = function()
@@ -489,10 +526,10 @@ local play_sound = function(player, list, number, is_music)
 		local gain = 1.0
 		if list[number].gain ~= nil then
 			if is_music then 				
-				gain = list[number].gain*MUSICVOLUME
+				gain = list[number].gain*volume[player_name].music
 				--minetest.chat_send_all("gain music: " .. gain )
 			else
-				gain = list[number].gain*SOUNDVOLUME 
+				gain = list[number].gain*volume[player_name].sound
 				--minetest.chat_send_all("gain sound: " .. gain )
 			end
 		end
@@ -514,224 +551,17 @@ end
 -- stops all sounds that are not in still_playing
 local stop_sound = function(still_playing, player)
 	local player_name = player:get_player_name()
-	if still_playing.cave == nil then
-		local list = cave
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.cave_frequent == nil then
-		local list = cave_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.swimming_frequent == nil then
-		local list = swimming_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.beach == nil then
-		local list = beach
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.beach_frequent == nil then
-		local list = beach_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.desert == nil then
-		local list = desert
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.desert_frequent == nil then
-		local list = desert_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.night == nil then
-		local list = night
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.night_frequent == nil then
-		local list = night_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.day == nil then
-		local list = day
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.day_frequent == nil then
-		local list = day_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.music == nil then
-		local list = music
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.flowing_water == nil then
-		local list = flowing_water
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.flowing_water2 == nil then
-		local list = flowing_water2
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.lava == nil then
-		local list = lava
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end	
-	if still_playing.lava2 == nil then
-		local list = lava2
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end		
-	if still_playing.water == nil then
-		local list = water
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.water_surface == nil then
-		local list = water_surface
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then				
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-				played_on_start = false
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.water_frequent == nil then
-		local list = water_frequent
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then				
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-		--		minetest.chat_send_all("list.on_stop " .. list.on_stop  )				
-				played_on_start = false
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end
-	if still_playing.flying == nil then
-		--minetest.chat_send_all("begin stop flying "   )
-		local list = flying
-		if list.handler[player_name] ~= nil then
-		--	minetest.chat_send_all("handler flying "   )
-			if list.on_stop ~= nil then
-			--	minetest.chat_send_all("onstop flying"   )
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-				played_on_start = false
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end	
-	if still_playing.splashing_water == nil then
-		local list = splashing_water
-		if list.handler[player_name] ~= nil then
-			if list.on_stop ~= nil then
-				minetest.sound_play(list.on_stop, {to_player=player:get_player_name(),gain=SOUNDVOLUME})
-			end
-			minetest.sound_stop(list.handler[player_name])
-			list.handler[player_name] = nil
-		end
-	end	
-	
+    for key,value in pairs(ambienceList) do
+        if still_playing[key] == nil then
+            if value.handler[player_name] ~= nil then
+                if value.on_stop ~= nil then
+                    minetest.sound_play(value.on_stop, {to_player=player_name,gain=volume[player_name].sound})
+                end
+                minetest.sound_stop(value.handler[player_name])
+                value.handler[player_name] = nil
+            end
+        end
+    end
 end
 
 local timer = 0
@@ -771,6 +601,44 @@ minetest.register_globalstep(function(dtime)
 	end
 end)
 
+minetest.register_on_joinplayer(function(player)
+    if volume[player:get_player_name()] == nil then
+        volume[player:get_player_name()] = {music=MUSICVOLUME, sound=SOUNDVOLUME}
+    end
+end)
+minetest.register_chatcommand("volume", {
+    description = "View sliders to set sound a music volume",
+    func = function(name,param)
+        minetest.show_formspec(name, "ambience:volume",
+            "size[6,3.5]" ..
+            "label[0,0.5;Music]" ..
+            "scrollbar[0,1;5.8,0.4;horizontal;music;" .. volume[name].music * 1000 .. "]" ..
+            "label[0,1.5;Sound]" ..
+            "scrollbar[0,2;5.8,0.4;horizontal;sound;" .. volume[name].sound * 1000 .. "]" ..
+            "button_exit[2,2.8;2,0.8;quit;Done]"
+            )
+    end,
+})
+minetest.register_on_player_receive_fields(function(player, formname, fields)
+    if formname ~= "ambience:volume" then
+        return false
+    end
+    minetest.log(dump(fields))
+    if fields.quit ~= "true" then
+        volume[player:get_player_name()].music = tonumber(string.split(fields.music,":")[2]) / 1000
+        volume[player:get_player_name()].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
+    end
+    if fields.quit then
+        local file, err = io.open(world_path.."/ambience_volumes", "w")
+        if not err then
+            for item in pairs(volume) do
+                file:write(item..":"..volume[item].music..":"..volume[item].sound.."\n")
+            end
+            file:close()
+        end
+    end
+    return true
+end)
 minetest.register_chatcommand("svol", {
 	params = "<svol>",
 	description = "set volume of sounds, default 1 normal volume.",
