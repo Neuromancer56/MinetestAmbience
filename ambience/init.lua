@@ -326,7 +326,7 @@ local get_ambience = function(player)
 	last_y_pos =pos.y
 	
 	if string.find(node_at_upper_body, "default:water") then
-		if music then
+		if play_music then
 			return {water=water, water_frequent=water_frequent, music=music}
 		else
 			return {water=water, water_frequent=water_frequent}
@@ -342,13 +342,13 @@ local get_ambience = function(player)
 			--standing in water nw, nm	beach trumps, then sloshing					
 			if player_is_moving_horiz then
 				if string.find(node_under_feet, "default:water") then
-					if music then
+					if play_music then
 						return {swimming_frequent=swimming_frequent, music=music}
 					else
 						return {swimming_frequent}
 					end	
 				else --didn't find water under feet: walking in water			
-					if music then
+					if play_music then
 						return {splashing_water=splashing_water, music=music}
 					else
 						return {splashing_water}
@@ -356,7 +356,7 @@ local get_ambience = function(player)
 				end
 			else--player is not moving: treading water
 				if string.find(node_under_feet, "default:water") then
-					if music then
+					if play_music then
 						return {water_surface=water_surface, music=music}
 					else
 						return {water_surface}
@@ -404,7 +404,7 @@ local get_ambience = function(player)
 --	if (player_is_moving_horiz or player_is_climbing) and air_or_ignore[node_at_upper_body] and air_or_ignore[node_at_lower_body]
 --	 and air_or_ignore[node_under_feet] and air_plus_ignore_under == 196 and not player_is_descending then 
 	--minetest.chat_send_all("flying!!!!")	
-	--	if music then
+	--	if play_music then
 		--	return {flying=flying, music=music}
 	--	else
 		---	return {flying}
@@ -413,14 +413,14 @@ local get_ambience = function(player)
 	--minetest.chat_send_all("not flying!!!!")	
 
 	if nodes_in_range(pos, 7, "default:lava_flowing")>5 or nodes_in_range(pos, 7, "default:lava_source")>5 then
-		if music then
+		if play_music then
 			return {lava=lava, lava2=lava2, music=music}		
 		else
 			return {lava=lava}
 		end
 	end
 	if nodes_in_range(pos, 6, "default:water_flowing")>45 then
-		if music then
+		if play_music then
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2, music=music}
 		else
 			return {flowing_water=flowing_water, flowing_water2=flowing_water2}
@@ -430,14 +430,14 @@ local get_ambience = function(player)
 
 --if we are near sea level and there is lots of water around the area
 	if pos.y < 7 and pos.y >0 and atleast_nodes_in_grid(pos, 60, 1, "default:water_source", 51 ) then
-		if music then
+		if play_music then
 			return {beach=beach, beach_frequent=beach_frequent, music=music}
 		else
 			return {beach=beach, beach_frequent=beach_frequent}
 		end		
 	end
 	if standing_in_water then
-		if music then
+		if play_music then
 			return {water_surface=water_surface, music=music}
 		else
 			return {water_surface}
@@ -448,7 +448,7 @@ local get_ambience = function(player)
 	desert_in_range = (nodes_in_range(pos, 6, "default:desert_sand")+nodes_in_range(pos, 6, "default:desert_stone"))
 	--minetest.chat_send_all("desertcount: " .. desert_in_range .. ",".. pos.y )
 	if  desert_in_range >250 then
-		if music then
+		if play_music then
 			return {desert=desert, desert_frequent=desert_frequent, music=music}
 		else
 			return {desert=desert, desert_frequent=desert_frequent}
@@ -461,20 +461,20 @@ local get_ambience = function(player)
 	
 
 	if player:getpos().y < 0 then
-		if music then
+		if play_music then
 			return {cave=cave, cave_frequent=cave_frequent, music=music}
 		else
 			return {cave=cave, cave_frequent=cave_frequent}
 		end
 	end
 	if is_daytime() then
-		if music then
+		if play_music then
 			return {day=day, day_frequent=day_frequent, music=music}
 		else
 			return {day=day, day_frequent=day_frequent}
 		end
 	else
-		if music then
+		if play_music then
 			return {night=night, night_frequent=night_frequent, music=music}
 		else
 			return {night=night, night_frequent=night_frequent}
